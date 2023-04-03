@@ -202,3 +202,24 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,intellij+all,gradle,java
+src/test/resources/logback.xml
+src/test/resources/static/css/bootstrap.min.css
+src/test/resources/static/css/styles.css
+src/test/resources/static/fonts/glyphicons-halflings-regular.eot
+src/test/resources/static/fonts/glyphicons-halflings-regular.svg
+src/test/resources/static/fonts/glyphicons-halflings-regular.ttf
+src/test/resources/static/fonts/glyphicons-halflings-regular.woff
+src/test/resources/static/fonts/glyphicons-halflings-regular.woff2
+src/test/resources/static/images/80-text.png
+src/test/resources/static/js/bootstrap.min.js
+src/test/resources/static/js/jquery-2.2.0.min.js
+src/test/resources/static/js/scripts.js
+src/test/resources/templates/favicon.ico
+src/test/resources/templates/index.html
+src/test/resources/templates/qna/form.html
+src/test/resources/templates/qna/show.html
+src/test/resources/templates/user/form.html
+src/test/resources/templates/user/list.html
+src/test/resources/templates/user/login.html
+src/test/resources/templates/user/login_failed.html
+src/test/resources/templates/user/profile.html

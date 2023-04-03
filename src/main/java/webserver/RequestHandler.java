@@ -5,14 +5,17 @@ import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import process.RequestProcess;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
+    private RequestProcess requestProcess;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
+        this.requestProcess = new RequestProcess();
     }
 
     public void run() {
@@ -23,33 +26,18 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             StringBuilder stringBuilder = new StringBuilder();
 
-
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-
-
-
-            // 헤드 파싱
-            String[] requestLine = br.readLine().split(" ");
-            String method = requestLine[0];
-            String url = requestLine[1];
-            String version = requestLine[2];
-
-            String rootPath = "/Users/lee/workspace/CodeSquad/be-java-was/src/main/resources";
-
-            // 바디 파싱
             String line = null;
             while (!(line = br.readLine()).equals("")) {
                 stringBuilder.append(line).append("\n");
             }
-
+            stringBuilder.append("\n");
 
             DataOutputStream dos = new DataOutputStream(out);
+            System.out.println(stringBuilder);
 
-
-
-//            byte[] body = "Hello World".getBytes();
-//            response200Header(dos, body.length);
-//            responseBody(dos, body);
+            byte[] body = requestProcess.process(stringBuilder.toString());
+            response200Header(dos, body.length);
+            responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
