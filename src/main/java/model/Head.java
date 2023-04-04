@@ -10,15 +10,17 @@ public class Head {
     private String method;
     private String url;
     private String version;
+    private Map<String, String> requestParams;
     private Map<String, String> headerBody;
 
     public Head(String head) throws IOException {
-        this.headerBody = new HashMap<>();
         BufferedReader bufferedReader = new BufferedReader(new StringReader(head));
         String[] requestLine = bufferedReader.readLine().split(" ");
+        this.headerBody = new HashMap<>();
         this.method = requestLine[0];
         this.url = requestLine[1];
         this.version = requestLine[2];
+        parseUrl();
 
         String line = null;
         while (!(line = bufferedReader.readLine()).equals("")) {
@@ -40,8 +42,29 @@ public class Head {
         return version;
     }
 
-    public String get(String key) {
+    public String getRequestParam(String key) {
+        // TODO : 요청 받은 파마미터가 String 타입이 아닐 수 있다. 수정 필요
+        return requestParams.get(key);
+    }
+
+    public String getHeaderElement(String key) {
         String lowerCaseOfKey = key.toLowerCase();
         return headerBody.get(lowerCaseOfKey);
+    }
+
+    private void parseUrl() {
+        if (url.contains("?")) {
+            parseRequestParams();
+        }
+    }
+
+    private void parseRequestParams() {
+        this.requestParams = new HashMap<>();
+        String requestParams = url.split("\\?")[1];
+        String[] params = requestParams.split("&");
+        for (String param : params) {
+            String[] keyAndVal = param.split("=");
+            this.requestParams.put(keyAndVal[0], keyAndVal[1]);
+        }
     }
 }
