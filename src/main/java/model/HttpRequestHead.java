@@ -35,7 +35,7 @@ public class HttpRequestHead {
     }
 
     public String getUrl() {
-        return url;
+        return url.split("\\?")[0];
     }
 
     public String getVersion() {

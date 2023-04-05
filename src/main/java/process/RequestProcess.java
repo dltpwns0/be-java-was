@@ -28,7 +28,7 @@ public class RequestProcess {
     }
 
     private byte[] getRequestFileAsByte(HttpRequestHead requestHead) throws IOException {
-        String requestUrl = requestHead.getUrl().split("\\?")[0];
+        String requestUrl = requestHead.getUrl();
 
         Optional<File> fileOptional = getFileAt(requestUrl);
 
