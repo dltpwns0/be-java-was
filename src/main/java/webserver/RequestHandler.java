@@ -33,7 +33,7 @@ public class RequestHandler implements Runnable {
             byte[] body = requestProcess.makeResponse(requestHead);
             response200Header(dos, body.length);
             responseBody(dos, body);
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
     }

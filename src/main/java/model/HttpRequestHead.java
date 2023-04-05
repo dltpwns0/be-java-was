@@ -8,19 +8,17 @@ import java.util.Map;
 
 public class HttpRequestHead {
     private final String method;
-    private final String url;
+    private String url;
+    private String requestParams;
     private final String version;
-    private final Map<String, String> requestParams;
     private final Map<String, String> MIMEHeader;
 
     public HttpRequestHead(String head) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(head));
         String[] requestLine = bufferedReader.readLine().split(" ");
         this.method = requestLine[0];
-        this.url = requestLine[1];
+        setUrl(requestLine[1]);
         this.version = requestLine[2];
-        this.requestParams = new HashMap<>();
-        setRequestParams();
 
         this.MIMEHeader = new HashMap<>();
         String line = null;
@@ -44,16 +42,7 @@ public class HttpRequestHead {
     }
 
     public boolean hasRequestParam() {
-        return requestParams.size() > 0;
-    }
-
-    public Map<String, String> getRequestParamAll() {
-        return requestParams;
-    }
-
-    public String getRequestParam(String key) {
-        // TODO : 요청 받은 파마미터가 String 타입이 아닐 수 있다. 수정 필요
-        return requestParams.get(key);
+        return requestParams == null;
     }
 
     public String getHeaderElement(String key) {
@@ -61,18 +50,21 @@ public class HttpRequestHead {
         return MIMEHeader.get(lowerCaseOfKey);
     }
 
-    private void setRequestParams() {
-        if (url.contains("?")) {
-            parseRequestParams();
-        }
+    public String getRequestParam() {
+        return requestParams;
     }
 
-    private void parseRequestParams() {
-        String requestParams = url.split("\\?")[1];
-        String[] params = requestParams.split("&");
-        for (String param : params) {
-            String[] keyAndVal = param.split("=");
-            this.requestParams.put(keyAndVal[0], keyAndVal[1]);
+    private void setUrl(String url) {
+        if (url.contains("?")) {
+            setUrlAndRequestParams(url);
+            return;
         }
+        this.url = url;
+    }
+
+    private void setUrlAndRequestParams(String url) {
+        String[]  UrlAndRequestParams = url.split("\\?");
+        this.url = UrlAndRequestParams[0];
+        this.requestParams = UrlAndRequestParams[1];
     }
 }

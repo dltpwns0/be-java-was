@@ -1,6 +1,7 @@
 package process;
-
 import model.HttpRequestHead;
+import model.User;
+import util.UserMapper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,11 +16,16 @@ public class RequestProcess {
     private final String[] basePath = {"static", "templates"};
     private final String welcomePage = "templates/index.html";
 
-    public byte[] makeResponse(String request) throws FileNotFoundException, IOException {
+    public byte[] makeResponse(String request) throws Exception {
         HttpRequestHead requestHead = new HttpRequestHead(request);
 
         String requestMethod = requestHead.getMethod();
+        // TODO : 메소드의 분리가 필요하다
         if (requestMethod.equalsIgnoreCase("GET")) {
+            if (!requestHead.hasRequestParam()) {
+                String requestParams = requestHead.getRequestParam();
+                Optional<User> userOptional = UserMapper.readValue(requestParams, User.class);
+            }
             return getRequestFileAsByte(requestHead);
         }
 
