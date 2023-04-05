@@ -7,21 +7,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequestHead {
-    private String method;
-    private String url;
-    private String version;
-    private Map<String, String> requestParams;
-    private Map<String, String> headerBody;
+    private final String method;
+    private final String url;
+    private final String version;
+    private final Map<String, String> requestParams;
+    private final Map<String, String> headerBody;
 
     public HttpRequestHead(String head) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(head));
         String[] requestLine = bufferedReader.readLine().split(" ");
-        this.headerBody = new HashMap<>();
         this.method = requestLine[0];
         this.url = requestLine[1];
         this.version = requestLine[2];
-        parseUrl();
+        this.requestParams = new HashMap<>();
+        setRequestParams();
 
+        this.headerBody = new HashMap<>();
         String line = null;
         while (!(line = bufferedReader.readLine()).equals("")) {
             // TODO 헤더 바디에서, 하나의 헤더 요소의 값들은 1개 이상일 수 있다. 수정 필요
@@ -52,14 +53,13 @@ public class HttpRequestHead {
         return headerBody.get(lowerCaseOfKey);
     }
 
-    private void parseUrl() {
+    private void setRequestParams() {
         if (url.contains("?")) {
             parseRequestParams();
         }
     }
 
     private void parseRequestParams() {
-        this.requestParams = new HashMap<>();
         String requestParams = url.split("\\?")[1];
         String[] params = requestParams.split("&");
         for (String param : params) {
