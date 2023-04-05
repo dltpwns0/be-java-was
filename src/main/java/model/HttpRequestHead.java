@@ -43,6 +43,14 @@ public class HttpRequestHead {
         return version;
     }
 
+    public boolean hasRequestParam() {
+        return requestParams.size() > 0;
+    }
+
+    public Map<String, String> getRequestParamAll() {
+        return requestParams;
+    }
+
     public String getRequestParam(String key) {
         // TODO : 요청 받은 파마미터가 String 타입이 아닐 수 있다. 수정 필요
         return requestParams.get(key);
