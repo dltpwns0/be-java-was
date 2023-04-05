@@ -1,6 +1,6 @@
 package process;
 
-import model.Head;
+import model.HttpRequestHead;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,12 +14,12 @@ public class RequestProcess {
     private final String rootPath = "src/main/resources/";
     private final String[] basePath = {"static", "templates"};
     private final String welcomePage = "templates/index.html";
-    private Head head;
+    private HttpRequestHead requestHead;
 
     public byte[] process(String request) throws FileNotFoundException, IOException {
-        this.head = new Head(request);
+        this.requestHead = new HttpRequestHead(request);
 
-        String method = head.getMethod();
+        String method = requestHead.getMethod();
         if (method.equalsIgnoreCase("GET")) {
             return getRequestFileAsByte();
         }
@@ -29,7 +29,7 @@ public class RequestProcess {
     }
 
     private byte[] getRequestFileAsByte() throws IOException {
-        String requestUrl = head.getUrl().split("\\?")[0];
+        String requestUrl = requestHead.getUrl().split("\\?")[0];
 
         Optional<File> fileOptional = getFileAt(requestUrl);
 

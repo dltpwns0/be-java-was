@@ -6,14 +6,14 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Head {
+public class HttpRequestHead {
     private String method;
     private String url;
     private String version;
     private Map<String, String> requestParams;
     private Map<String, String> headerBody;
 
-    public Head(String head) throws IOException {
+    public HttpRequestHead(String head) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(head));
         String[] requestLine = bufferedReader.readLine().split(" ");
         this.headerBody = new HashMap<>();
