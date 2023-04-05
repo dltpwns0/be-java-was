@@ -18,8 +18,8 @@ public class RequestProcess {
     public byte[] makeResponse(String request) throws FileNotFoundException, IOException {
         HttpRequestHead requestHead = new HttpRequestHead(request);
 
-        String method = requestHead.getMethod();
-        if (method.equalsIgnoreCase("GET")) {
+        String requestMethod = requestHead.getMethod();
+        if (requestMethod.equalsIgnoreCase("GET")) {
             return getRequestFileAsByte(requestHead);
         }
 
