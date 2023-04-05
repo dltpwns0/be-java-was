@@ -1,5 +1,6 @@
 package process;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,10 +12,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RequestProcessTest {
 
-    StringBuilder sb;
+    private static StringBuilder sb;
 
-    @BeforeEach
-    public void beforeEach() {
+    @BeforeAll
+    public static void beforeAll() {
         sb = new StringBuilder();
         sb.append("GET /index.html HTTP1.1").append("\n");
         sb.append("Accept: */*").append("\n");
