@@ -2,6 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
 
             String requestHead = readRequestHead(br);
-            
+
             byte[] body = requestProcess.makeResponse(requestHead);
             response200Header(dos, body.length);
             responseBody(dos, body);
@@ -39,12 +40,23 @@ public class RequestHandler implements Runnable {
 
     private static String readRequestHead(BufferedReader br) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
+        readRequestLine(br, stringBuilder);
+        readRequestMIME(br, stringBuilder);
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
+    }
+
+    private static void readRequestMIME(BufferedReader br, StringBuilder stringBuilder) throws IOException {
         String line = null;
         while (!(line = br.readLine()).equals("")) {
             stringBuilder.append(line).append("\n");
         }
-        stringBuilder.append("\n");
-        return stringBuilder.toString();
+    }
+
+    private static void readRequestLine(BufferedReader br, StringBuilder stringBuilder) throws IOException {
+        String line = br.readLine();
+        String requestLine = URLDecoder.decode(line, StandardCharsets.UTF_8);
+        stringBuilder.append(requestLine).append("\n");
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
