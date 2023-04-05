@@ -49,23 +49,4 @@ public class HeadTest {
         assertThat(head.getHeaderElement("accept")).isEqualTo("*/*");
         assertThat(head.getHeaderElement("Content-Type")).isEqualTo("text");
     }
-
-//    @Test
-//    @DisplayName("HttpRequestHead 클래스의 생성자가 String 타입의 헤더를 입력받아, 요청 파라미터를 파싱하는지 테스트")
-//    public void HttpRequestParametersTest() throws IOException {
-//        // when
-//        sb.append("GET /index.html?userId=cire&password=1234&name=이동준&email=dltpwns6@naver.com HTTP1.1").append("\n");
-//        sb.append("Accept: */*").append("\n");
-//        sb.append("Content-Type: text").append("\n");
-//        sb.append("\n");
-//
-//        // given
-//        head = new HttpRequestHead(sb.toString());
-//
-//        // then
-//        assertThat(head.getRequestParam("userId")).isEqualTo("cire");
-//        assertThat(head.getRequestParam("password")).isEqualTo("1234");
-//        assertThat(head.getRequestParam("name")).isEqualTo("이동준");
-//        assertThat(head.getRequestParam("email")).isEqualTo("dltpwns6@naver.com");
-//    }
 }
