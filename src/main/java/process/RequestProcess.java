@@ -14,21 +14,20 @@ public class RequestProcess {
     private final String rootPath = "src/main/resources/";
     private final String[] basePath = {"static", "templates"};
     private final String welcomePage = "templates/index.html";
-    private HttpRequestHead requestHead;
 
     public byte[] process(String request) throws FileNotFoundException, IOException {
-        this.requestHead = new HttpRequestHead(request);
+        HttpRequestHead requestHead = new HttpRequestHead(request);
 
         String method = requestHead.getMethod();
         if (method.equalsIgnoreCase("GET")) {
-            return getRequestFileAsByte();
+            return getRequestFileAsByte(requestHead);
         }
 
         // TODO : GET 이외의 요청 메소드는 처리하지 않음. (기능 추가 필요)
         return null;
     }
 
-    private byte[] getRequestFileAsByte() throws IOException {
+    private byte[] getRequestFileAsByte(HttpRequestHead requestHead) throws IOException {
         String requestUrl = requestHead.getUrl().split("\\?")[0];
 
         Optional<File> fileOptional = getFileAt(requestUrl);
