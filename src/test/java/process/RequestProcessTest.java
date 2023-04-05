@@ -1,7 +1,6 @@
 package process;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.io.File;
@@ -30,7 +29,7 @@ class RequestProcessTest {
         String head = sb.toString();
         RequestProcess requestProcess = new RequestProcess();
 
-        byte[] body = requestProcess.process(head);
+        byte[] body = requestProcess.makeResponse(head);
         byte[] expectedBody = Files.readAllBytes(new File("src/main/resources/templates/index.html").toPath());
 
         assertThat(body).isEqualTo(expectedBody);

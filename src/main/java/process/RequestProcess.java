@@ -15,7 +15,7 @@ public class RequestProcess {
     private final String[] basePath = {"static", "templates"};
     private final String welcomePage = "templates/index.html";
 
-    public byte[] process(String request) throws FileNotFoundException, IOException {
+    public byte[] makeResponse(String request) throws FileNotFoundException, IOException {
         HttpRequestHead requestHead = new HttpRequestHead(request);
 
         String method = requestHead.getMethod();

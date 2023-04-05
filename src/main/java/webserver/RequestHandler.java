@@ -25,23 +25,26 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader( in, StandardCharsets.UTF_8));
-            StringBuilder stringBuilder = new StringBuilder();
-
-            String line = null;
-            while (!(line = br.readLine()).equals("")) {
-                stringBuilder.append(line).append("\n");
-            }
-            stringBuilder.append("\n");
-
             DataOutputStream dos = new DataOutputStream(out);
-            System.out.println(stringBuilder);
 
-            byte[] body = requestProcess.process(stringBuilder.toString());
+            String requestHead = readRequestHead(br);
+            
+            byte[] body = requestProcess.makeResponse(requestHead);
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private static String readRequestHead(BufferedReader br) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        String line = null;
+        while (!(line = br.readLine()).equals("")) {
+            stringBuilder.append(line).append("\n");
+        }
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
