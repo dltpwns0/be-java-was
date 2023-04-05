@@ -23,25 +23,28 @@ public class RequestProcess {
         if (method.equalsIgnoreCase("GET")) {
             return getRequestFileAsByte();
         }
+
+        // TODO : GET 이외의 요청 메소드는 처리하지 않음. (기능 추가 필요)
         return null;
     }
 
     private byte[] getRequestFileAsByte() throws IOException {
         String requestUrl = head.getUrl().split("\\?")[0];
 
-        // TODO : 코드를 하나도 알아볼 수 없다. 수정 필요 (메소드 분리)
-        Optional<File> fileOptional = Arrays.stream(basePath)
-                .filter(basePath -> findFile(requestUrl, basePath))
-                .findFirst()
-                .map(basePath -> new File((rootPath + basePath + requestUrl)));
+        Optional<File> fileOptional = getFileAt(requestUrl);
 
-        // 요청 파일이 없다면 웰컴 페이지 리턴
         File file = fileOptional.orElse(new File(rootPath + welcomePage));
-        byte[] body = Files.readAllBytes(file.toPath());
-        return body;
+        return Files.readAllBytes(file.toPath());
     }
 
-    private boolean findFile(String requestUrl, String basePath) {
+    private Optional<File> getFileAt(String requestUrl) {
+        return Arrays.stream(basePath)
+                .filter(basePath -> fileExistsAt(requestUrl, basePath))
+                .findFirst()
+                .map(basePath -> new File((rootPath + basePath + requestUrl)));
+    }
+
+    private boolean fileExistsAt(String requestUrl, String basePath) {
         File f = new File(rootPath + basePath + requestUrl);
         return f.exists();
     }
