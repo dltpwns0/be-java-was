@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
+import model.HttpRequest;
+import model.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import process.RequestProcess;
@@ -13,11 +15,11 @@ public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
-    private RequestProcess requestProcess;
+    private HttpServlet httpServlet;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        this.requestProcess = new RequestProcess();
+        this.httpServlet = new HttpServlet();
     }
 
     public void run() {
@@ -30,7 +32,14 @@ public class RequestHandler implements Runnable {
 
             String requestHead = readRequestHead(br);
 
-            byte[] body = requestProcess.makeResponse(requestHead);
+            HttpRequest httpRequest = new HttpRequest(requestHead);
+            HttpResponse httpResponse = new HttpResponse();
+
+            httpServlet.service(httpRequest, httpResponse);
+
+
+            byte[] body = httpResponse.getResponseBody();
+
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (Exception e) {
