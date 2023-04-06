@@ -42,7 +42,7 @@ public class HttpRequestHead {
     }
 
     public boolean hasRequestParam() {
-        return requestParams == null;
+        return requestParams != null;
     }
 
     public String getHeaderElement(String key) {

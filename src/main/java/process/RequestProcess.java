@@ -22,7 +22,7 @@ public class RequestProcess {
         String requestMethod = requestHead.getMethod();
         // TODO : 메소드의 분리가 필요하다
         if (requestMethod.equalsIgnoreCase("GET")) {
-            if (!requestHead.hasRequestParam()) {
+            if (requestHead.hasRequestParam()) {
                 String requestParams = requestHead.getRequestParam();
                 Optional<?> optionalObject = MyObjectMapper.readValue(requestParams, User.class);
                 if (optionalObject.isPresent()) {
