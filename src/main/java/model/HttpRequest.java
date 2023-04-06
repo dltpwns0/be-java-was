@@ -12,8 +12,8 @@ import java.util.Map;
 
 public class HttpRequest {
     private HttpMethod method;
-    private String url;
-    private String requestParams;
+    private String path;
+    private String query;
     private final String version;
     private final Map<String, String> requestHeaders;
 
@@ -21,7 +21,7 @@ public class HttpRequest {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(requestHead));
         String[] requestLine = bufferedReader.readLine().split(" ");
         setMethod(requestLine[0]);
-        setUrl(requestLine[1]);
+        setPath(requestLine[1]);
         this.version = requestLine[2];
 
         this.requestHeaders = new HashMap<>();
@@ -37,16 +37,16 @@ public class HttpRequest {
         return method;
     }
 
-    public String getUrl() {
-        return url.split("\\?")[0];
+    public String getPath() {
+        return path.split("\\?")[0];
     }
 
     public String getVersion() {
         return version;
     }
 
-    public boolean hasRequestParam() {
-        return requestParams != null;
+    public boolean hasQuery() {
+        return query != null;
     }
 
     public String getHeaderElement(String key) {
@@ -54,8 +54,8 @@ public class HttpRequest {
         return requestHeaders.get(lowerCaseOfKey);
     }
 
-    public String getRequestParam() {
-        return requestParams;
+    public String getQuery() {
+        return query;
     }
 
     private void setMethod(String method) {
@@ -64,18 +64,18 @@ public class HttpRequest {
         }
     }
 
-    private void setUrl(String url) {
-        String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
+    private void setPath(String path) {
+        String decodedUrl = URLDecoder.decode(path, StandardCharsets.UTF_8);
         if (decodedUrl.contains("?")) {
-            setUrlAndRequestParams(decodedUrl);
+            setPathAndQuery(decodedUrl);
             return;
         }
-        this.url = decodedUrl;
+        this.path = decodedUrl;
     }
 
-    private void setUrlAndRequestParams(String url) {
-        String[]  UrlAndRequestParams = url.split("\\?");
-        this.url = UrlAndRequestParams[0];
-        this.requestParams = UrlAndRequestParams[1];
+    private void setPathAndQuery(String url) {
+        String[]  pathAndQuery = url.split("\\?");
+        this.path = pathAndQuery[0];
+        this.query = pathAndQuery[1];
     }
 }

@@ -30,8 +30,8 @@ public class HeadTest {
 
         // then
         assertThat(head.getMethod()).isEqualTo(HttpMethod.GET);
-        assertThat(head.getUrl()).isEqualTo("/index.html");
-        assertThat(head.getRequestParam()).isEqualTo("userId=cire&password=1234&name=이동준&email=dltpwns6@naver.com");
+        assertThat(head.getPath()).isEqualTo("/index.html");
+        assertThat(head.getQuery()).isEqualTo("userId=cire&password=1234&name=이동준&email=dltpwns6@naver.com");
         assertThat(head.getVersion()).isEqualTo("HTTP1.1");
     }
 

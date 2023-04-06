@@ -10,14 +10,14 @@ public class UserController {
     private final UserService userService = new UserService();
 
     public void create(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
-        String requestUrl = httpRequest.getUrl();
-        String requestParams = httpRequest.getRequestParam();
+        String requestUrl = httpRequest.getPath();
+        String requestParams = httpRequest.getQuery();
         userService.join(requestParams);
-        httpResponse.doGet(requestUrl);
+        httpResponse.setPath(requestUrl);
     }
 
     public void show(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        String requestUrl = httpRequest.getUrl();
-        httpResponse.doGet(requestUrl);
+        String requestUrl = httpRequest.getPath();
+        httpResponse.setPath(requestUrl);
     }
 }
