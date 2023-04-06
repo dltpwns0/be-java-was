@@ -11,7 +11,7 @@ public class HttpRequestHead {
     private String url;
     private String requestParams;
     private final String version;
-    private final Map<String, String> MIMEHeader;
+    private final Map<String, String> requestHeaders;
 
     public HttpRequestHead(String head) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(head));
@@ -20,12 +20,12 @@ public class HttpRequestHead {
         setUrl(requestLine[1]);
         this.version = requestLine[2];
 
-        this.MIMEHeader = new HashMap<>();
+        this.requestHeaders = new HashMap<>();
         String line = null;
         while (!(line = bufferedReader.readLine()).equals("")) {
             // TODO 헤더 바디에서, 하나의 헤더 요소의 값들은 1개 이상일 수 있다. 수정 필요
             String[] headerElement = line.split(": ");
-            MIMEHeader.put(headerElement[0].toLowerCase(), headerElement[1]);
+            requestHeaders.put(headerElement[0].toLowerCase(), headerElement[1]);
         }
     }
 
@@ -47,7 +47,7 @@ public class HttpRequestHead {
 
     public String getHeaderElement(String key) {
         String lowerCaseOfKey = key.toLowerCase();
-        return MIMEHeader.get(lowerCaseOfKey);
+        return requestHeaders.get(lowerCaseOfKey);
     }
 
     public String getRequestParam() {
