@@ -1,10 +1,10 @@
 package process;
+import db.Database;
 import model.HttpRequestHead;
 import model.User;
-import util.UserMapper;
+import util.MyObjectMapper;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -15,7 +15,7 @@ public class RequestProcess {
     private final String rootPath = "src/main/resources/";
     private final String[] basePath = {"static", "templates"};
     private final String welcomePage = "templates/index.html";
-
+    
     public byte[] makeResponse(String request) throws Exception {
         HttpRequestHead requestHead = new HttpRequestHead(request);
 
@@ -24,7 +24,14 @@ public class RequestProcess {
         if (requestMethod.equalsIgnoreCase("GET")) {
             if (!requestHead.hasRequestParam()) {
                 String requestParams = requestHead.getRequestParam();
-                Optional<User> userOptional = UserMapper.readValue(requestParams, User.class);
+                Optional<?> optionalObject = MyObjectMapper.readValue(requestParams, User.class);
+                if (optionalObject.isPresent()) {
+                    Object object = optionalObject.get();
+                    if (object instanceof User) {
+                        User user = (User) object;
+                        Database.addUser(user);
+                    }
+                }
             }
             return getRequestFileAsByte(requestHead);
         }

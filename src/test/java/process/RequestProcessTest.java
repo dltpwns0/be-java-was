@@ -4,12 +4,9 @@ import model.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import util.UserMapper;
+import util.MyObjectMapper;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.Optional;
 
@@ -48,7 +45,7 @@ class RequestProcessTest {
         String requestParams = "userId=cire&password=1234&name=이동준&email=dltpwns6@naver.com";
 
         // when
-        Optional<User> userOptional = UserMapper.readValue(requestParams, User.class);
+        Optional<User> userOptional = (Optional<User>) MyObjectMapper.readValue(requestParams, User.class);
         User user = userOptional.get();
 
         // then
@@ -56,6 +53,11 @@ class RequestProcessTest {
         assertThat(user.getPassword()).isEqualTo("1234");
         assertThat(user.getName()).isEqualTo("이동준");
         assertThat(user.getEmail()).isEqualTo("dltpwns6@naver.com");
+
+        assertThat(user.getUserId()).isNotEqualTo("cirae");
+        assertThat(user.getPassword()).isNotEqualTo("134");
+        assertThat(user.getName()).isNotEqualTo("이준");
+        assertThat(user.getEmail()).isNotEqualTo("dltpwns6@snaver.com");
     }
 
 
