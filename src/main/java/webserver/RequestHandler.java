@@ -9,16 +9,19 @@ import model.HttpRequest;
 import model.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpResponseResolver;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
     private HttpServlet httpServlet;
+    private HttpResponseResolver httpResponseResolver;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.httpServlet = new HttpServlet();
+        this.httpResponseResolver = new HttpResponseResolver();
     }
 
     public void run() {
@@ -36,11 +39,9 @@ public class RequestHandler implements Runnable {
 
             httpServlet.service(httpRequest, httpResponse);
 
-
-            byte[] body = httpResponse.getResponseBody();
-
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            byte[] response = httpResponseResolver.resolve(httpResponse);
+            dos.write(response);
+            dos.flush();
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
@@ -49,12 +50,12 @@ public class RequestHandler implements Runnable {
     private static String readRequestHead(BufferedReader br) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         readRequestLine(br, stringBuilder);
-        readRequestMIME(br, stringBuilder);
+        readRequestHeader(br, stringBuilder);
         stringBuilder.append("\n");
         return stringBuilder.toString();
     }
 
-    private static void readRequestMIME(BufferedReader br, StringBuilder stringBuilder) throws IOException {
+    private static void readRequestHeader(BufferedReader br, StringBuilder stringBuilder) throws IOException {
         String line = null;
         while (!(line = br.readLine()).equals("")) {
             stringBuilder.append(line).append("\n");
@@ -65,25 +66,5 @@ public class RequestHandler implements Runnable {
         String line = br.readLine();
         String requestLine = URLDecoder.decode(line, StandardCharsets.UTF_8);
         stringBuilder.append(requestLine).append("\n");
-    }
-
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
     }
 }

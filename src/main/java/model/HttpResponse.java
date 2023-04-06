@@ -8,36 +8,27 @@ import java.util.Optional;
 
 public class HttpResponse {
 
-    private final String rootPath = "src/main/resources/";
-    private final String[] basePath = {"static", "templates"};
-    private final String welcomePage = "templates/index.html";
+    private String path;
 
-    public byte[] responseHead = null;
-    public byte[] responseBody = null;
+    private String contentType;
 
-    public byte[] getResponseBody() {
-        return this.responseBody;
+    public String getContentType() {
+        return contentType;
     }
 
-    public void doGet(String requestUrl) throws IOException {
-        Optional<File> fileOptional = getFileAt(requestUrl);
-        File file = fileOptional.orElse(new File(rootPath + welcomePage));
-        this.responseBody = Files.readAllBytes(file.toPath());
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
-    private Optional<File> getFileAt(String requestUrl) {
-        return Arrays.stream(basePath)
-                .filter(basePath -> fileExistsAt(requestUrl, basePath))
-                .findFirst()
-                .map(basePath -> new File((rootPath + basePath + requestUrl)));
+    public String getPath() {
+        return path;
     }
 
-    private boolean fileExistsAt(String requestUrl, String basePath) {
-        File f = new File(rootPath + basePath + requestUrl);
-        if (!f.exists()) {
-            return false;
-        }
-        return f.isFile();
+    public void setPath(String path) {
+        this.path = path;
     }
+
+
+
 
 }

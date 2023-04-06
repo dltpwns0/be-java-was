@@ -11,19 +11,20 @@ public class HttpServlet {
 
     public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
 
-        HttpMethod method = httpRequest.getMethod();
+        doRequestMethod(httpRequest, httpResponse);
 
+    }
+
+    private void doRequestMethod(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
+        HttpMethod method = httpRequest.getMethod();
         if (method == HttpMethod.GET) {
             doGet(httpRequest, httpResponse);
-            return;
         }
-
         // TODO : 요청 메서드가 더 있을 수 있다.
-        return;
     }
 
     private void doGet(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
-        if (httpRequest.hasRequestParam()) {
+        if (httpRequest.hasQuery()) {
             userController.create(httpRequest, httpResponse);
             return;
         }
