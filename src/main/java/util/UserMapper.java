@@ -3,44 +3,54 @@ package util;
 import model.User;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class UserMapper {
 
     public static Optional<User> readValue(String requestParams, Class<User> userClass) throws Exception {// 사실 userClass 를 입력 받을 필요는 없지만, 공부를 위해 넣어 봤다.
+        List<String> params = parseRequestParams(requestParams);
 
-        // 리플렉션 API 를 통해 private 필드를 가져오는 것은 좋지 않다고 한다. 그렇다면 다른 방법으로 가져올 수 있나?
-        Map<String, String> params = parseRequestParams(requestParams);
-        List<Object> constructVariables = new ArrayList<>();
-        List<Class<?>> constructType = new ArrayList<>();
+        // TODO : 현재의 객체의 생성자를 찾는 방법은 파라미터의 개수만을 이용하여 찾는다.
+        // TODO : 생성자 매개변수의 이름도 사용할 수 없을까?
+        Constructor<?> constructor = findConstructor(userClass, params);
+        if (constructor == null) return Optional.empty();
 
-        // TODO : 아래의 방법은 뭔가.... 많이 비효율적인 것 같다. (효율성 개선 필요) (어려울 뜻)
-        // 그냥 요청 파라미터를 입력으로 받고 객체로 변환하는 메소드가 없을까? (있을 것 같다...) (있넹;;)
-        // TODO : 요청 파라미터의 순서와 생성자 매개변수의 순서가 맞아야 하는 문제가 있다. 어떻게 해결할 수 있는 방법이 있을까? (매우 어려울 것 같다..)
-        // TODO : 예외 처리를 잘해야 한다. (예외 처리 추가 필요)
-        for (Map.Entry<String, String> param: params.entrySet()) {
-            String key = param.getKey();
-            String value = param.getValue();
+        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        List<Object> constructVariables = convertType(params, parameterTypes);
 
-            Field fieldName = userClass.getDeclaredField(key);
-            Class<?> fieldType = fieldName.getType();
-
-            constructVariables.add(fieldType.cast(value)); // 여기에는 생성자 변수들이 들어간다.
-            constructType.add(fieldType);
-        }
-
-        Constructor<User> constructor = userClass.getConstructor(constructType.toArray(Class<?>[]::new));
-        return Optional.of(constructor.newInstance(constructVariables.toArray()));
+        return getObject(userClass, constructVariables, constructor);
     }
 
-    private static Map<String, String> parseRequestParams(String requestParams) {
-        Map<String, String> requestParamMap = new LinkedHashMap<>();
+    private static List<Object> convertType(List<String> params, Class<?>[] parameterTypes) {
+        List<Object> constructVariables = new ArrayList<>();
+        for (int i = 0; i < params.size(); i++) {
+            String parameter = params.get(i);
+            Class<?> parameterType = parameterTypes[i];
+            constructVariables.add(parameterType.cast(parameter));
+        }
+        return constructVariables;
+    }
+
+    private static Optional<User> getObject(Class<User> userClass, List<Object> constructVariables, Constructor<?> constructor) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+        return Optional.of(userClass.cast(constructor.newInstance(constructVariables.toArray())));
+    }
+
+    private static Constructor<?> findConstructor(Class<User> userClass, List<String> params) {
+        Constructor<?> constructor = null;
+        for (Constructor<?> cont : userClass.getConstructors()) {
+            if (cont.getParameterTypes().length != params.size()) continue;
+            constructor = cont;
+        }
+        return constructor;
+    }
+
+    private static List<String> parseRequestParams(String requestParams) {
+        List<String> requestParamMap = new ArrayList<>();
         String[] params = requestParams.split("&");
         for (String param : params) {
             String[] keyAndVal = param.split("=");
-            requestParamMap.put(keyAndVal[0], keyAndVal[1]);
+            requestParamMap.add(keyAndVal[1]);
         }
         return requestParamMap;
     }
