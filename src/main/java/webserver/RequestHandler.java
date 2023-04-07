@@ -49,12 +49,12 @@ public class RequestHandler implements Runnable {
     private static String readRequestHead(BufferedReader br) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         readRequestLine(br, stringBuilder);
-        readRequestMIME(br, stringBuilder);
+        readRequestHeader(br, stringBuilder);
         stringBuilder.append("\n");
         return stringBuilder.toString();
     }
 
-    private static void readRequestMIME(BufferedReader br, StringBuilder stringBuilder) throws IOException {
+    private static void readRequestHeader(BufferedReader br, StringBuilder stringBuilder) throws IOException {
         String line = null;
         while (!(line = br.readLine()).equals("")) {
             stringBuilder.append(line).append("\n");

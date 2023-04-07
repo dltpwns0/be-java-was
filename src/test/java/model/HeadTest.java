@@ -37,7 +37,7 @@ public class HeadTest {
 
     @Test
     @DisplayName("HttpRequest 클래스의 생성자가 String 타입의 헤더를 입력받아, 헤더를 파싱해야 한다.")
-    public void HttpRequestMIMETest() throws IOException {
+    public void HttpRequestHeaderTest() throws IOException {
         // when
         sb.append("GET /index.html?userId=cire&password=1234&name=이동준&email=dltpwns6@naver.com HTTP1.1").append("\n");
         sb.append("Accept: */*").append("\n");
