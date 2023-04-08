@@ -35,41 +35,19 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader( in, StandardCharsets.UTF_8));
-            DataOutputStream dos = new DataOutputStream(out);
 
-            String requestHead = readRequestHead(br);
-
-            HttpRequest httpRequest = new HttpRequest(requestHead);
+            HttpRequest httpRequest = new HttpRequest(br);
             HttpResponse httpResponse = new HttpResponse();
 
             httpServlet.service(httpRequest, httpResponse);
 
             byte[] response = httpResponseResolver.resolve(httpResponse);
+
+            DataOutputStream dos = new DataOutputStream(out);
             dos.write(response);
             dos.flush();
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
-    }
-
-    private static String readRequestHead(BufferedReader br) throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        readRequestLine(br, stringBuilder);
-        readRequestHeader(br, stringBuilder);
-        stringBuilder.append("\n");
-        return stringBuilder.toString();
-    }
-
-    private static void readRequestHeader(BufferedReader br, StringBuilder stringBuilder) throws IOException {
-        String line = null;
-        while (!(line = br.readLine()).equals("")) {
-            stringBuilder.append(line).append("\n");
-        }
-    }
-
-    private static void readRequestLine(BufferedReader br, StringBuilder stringBuilder) throws IOException {
-        String line = br.readLine();
-        String requestLine = URLDecoder.decode(line, StandardCharsets.UTF_8);
-        stringBuilder.append(requestLine).append("\n");
     }
 }

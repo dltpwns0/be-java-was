@@ -17,8 +17,10 @@ public class HttpRequest {
     private final String version;
     private final Map<String, String> requestHeaders;
 
-    public HttpRequest(String requestHead) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new StringReader(requestHead));
+    public HttpRequest(BufferedReader bufferedReader) throws IOException {
+
+
+
         String[] requestLine = bufferedReader.readLine().split(" ");
         setMethod(requestLine[0]);
         setPath(requestLine[1]);
