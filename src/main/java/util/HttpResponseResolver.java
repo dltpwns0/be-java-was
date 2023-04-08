@@ -7,7 +7,10 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class HttpResponseResolver {
 
@@ -15,15 +18,21 @@ public class HttpResponseResolver {
     private final String[] basePath = {"static", "templates"};
     private final String welcomePage = "templates/index.html";
 
+    private static Map<String, String> mime = new HashMap<>();
 
     public byte[] resolve(HttpResponse response) throws IOException {
+        File file = resolveFile(response);
+        String contentType = resolveContentType(response, file);
 
-        resolveContentType(response);
+        return resolve(file, contentType);
+    }
 
-        String path = response.getPath();
-        String contentType = response.getContentType();
+    public void addSupportedMimeType(String extension, String mimeType) {
+        mime.put(extension, mimeType);
+    }
 
-        byte[] body = resolveBody(path);
+    private byte[] resolve(File file, String contentType) throws IOException {
+        byte[] body = resolveBody(file);
         byte[] head = resolveHead(contentType, body.length);
 
         ByteBuffer buffer = ByteBuffer.allocate(head.length + body.length);
@@ -32,32 +41,29 @@ public class HttpResponseResolver {
         return buffer.array();
     }
 
-    private static void resolveContentType(HttpResponse response) {
-        if (response.getContentType() != null) {
-            return;
-        }
+    private File resolveFile(HttpResponse response) {
         String path = response.getPath();
-        int index = path.lastIndexOf(".");
-        String extension = path.substring(index + 1);
-        if (extension.equals("html")) {
-            response.setContentType("text/html");
+        return getFileAt(path);
+    }
+
+    private String resolveContentType(HttpResponse response, File file) {
+        if (response.getContentType() != null) {
+            return response.getContentType();
         }
-        if (extension.equals("css")) {
-            response.setContentType("text/css");
-        }
-        if (extension.equals("js")) {
-            response.setContentType("application/javascript");
-        }
-        if (extension.equals("png")) {
-            response.setContentType("image/png");
-        }
-        if (extension.equals("ico")) {
-            response.setContentType("image/x-icon");
-        }
+        String extension = getExtension(file);
+        return  mime.get(extension);
+    }
+
+    private static String getExtension(File file) {
+        String fileName = file.getName();
+        int index = fileName.lastIndexOf(".");
+        return  fileName.substring(index + 1);
     }
 
     private byte[] resolveHead(String contentType, int lengthOfBodyContent) {
         StringBuilder stringBuilder = new StringBuilder();
+
+        // TODO : 왜 항상 200 OK? (예외 처리 로직 추가)
         stringBuilder.append("HTTP/1.1 200 OK)").append("\n");
         stringBuilder.append("Content-Type: ").append(contentType).append("\n");
         stringBuilder.append("Content-Length: ").append(lengthOfBodyContent).append("\n");
@@ -65,17 +71,16 @@ public class HttpResponseResolver {
         return stringBuilder.toString().getBytes();
     }
 
-    public byte[] resolveBody(String path) throws IOException {
-        Optional<File> fileOptional = getFileAt(path);
-        File file = fileOptional.orElse(new File(rootPath + welcomePage));
+    public byte[] resolveBody(File file) throws IOException {
         return Files.readAllBytes(file.toPath());
     }
 
-    private Optional<File> getFileAt(String requestUrl) {
+    private File getFileAt(String requestUrl) {
         return Arrays.stream(basePath)
                 .filter(basePath -> fileExistsAt(requestUrl, basePath))
                 .findFirst()
-                .map(basePath -> new File((rootPath + basePath + requestUrl)));
+                .map(basePath -> new File((rootPath + basePath + requestUrl)))
+                .orElse(new File(rootPath + welcomePage));
     }
 
     private boolean fileExistsAt(String requestUrl, String basePath) {

@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
+import configure.ResolverConfigure;
 import model.HttpRequest;
 import model.HttpResponse;
 import org.slf4j.Logger;
@@ -17,11 +18,15 @@ public class RequestHandler implements Runnable {
     private Socket connection;
     private HttpServlet httpServlet;
     private HttpResponseResolver httpResponseResolver;
+    private ResolverConfigure resolverConfigure;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.httpServlet = new HttpServlet();
         this.httpResponseResolver = new HttpResponseResolver();
+        // TODO : 이러한 설정은 메인 함수에서 하는 것이 맞을 것 같다.
+        this.resolverConfigure = new ResolverConfigure();
+        resolverConfigure.addMimeType(this.httpResponseResolver);
     }
 
     public void run() {
