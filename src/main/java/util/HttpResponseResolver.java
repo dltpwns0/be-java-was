@@ -14,6 +14,9 @@ import java.util.stream.Stream;
 
 public class HttpResponseResolver {
 
+    // TODO : serverIP가 여기에 있는게 맞나?
+    private final String serverIP = "http://localhost:8080";
+
     private final String rootPath = "src/main/resources/";
     private final String[] basePath = {"static", "templates"};
     private final String welcomePage = "templates/index.html";
@@ -21,6 +24,10 @@ public class HttpResponseResolver {
     private static Map<String, String> mime = new HashMap<>();
 
     public byte[] resolve(HttpResponse response) throws IOException {
+        if (response.hasRedirectUrl()) {
+            return resolve(response.getRedirectUrl());
+        }
+
         File file = resolveFile(response);
         String contentType = resolveContentType(response, file);
 
@@ -29,6 +36,10 @@ public class HttpResponseResolver {
 
     public void addSupportedMimeType(String extension, String mimeType) {
         mime.put(extension, mimeType);
+    }
+
+    private byte[] resolve(String redirectUrl) {
+        return resolveHead(redirectUrl);
     }
 
     private byte[] resolve(File file, String contentType) throws IOException {
@@ -51,13 +62,23 @@ public class HttpResponseResolver {
             return response.getContentType();
         }
         String extension = getExtension(file);
-        return  mime.get(extension);
+        return mime.get(extension);
     }
 
     private static String getExtension(File file) {
         String fileName = file.getName();
         int index = fileName.lastIndexOf(".");
-        return  fileName.substring(index + 1);
+        return fileName.substring(index + 1);
+    }
+
+    private byte[] resolveHead(String redirectUrl) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        // TODO : 아래의 resolveHead 에서 중복이 보이는 것 같다.
+        stringBuilder.append("HTTP/1.1 302 OK)").append("\n");
+        stringBuilder.append("Location: ").append(serverIP).append(redirectUrl).append("\n");
+        stringBuilder.append("\n");
+        return stringBuilder.toString().getBytes();
     }
 
     private byte[] resolveHead(String contentType, int lengthOfBodyContent) {

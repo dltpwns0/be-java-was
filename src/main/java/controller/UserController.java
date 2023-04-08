@@ -13,7 +13,7 @@ public class UserController {
         String requestUrl = httpRequest.getPath();
         String requestParams = httpRequest.getQuery();
         userService.join(requestParams);
-        httpResponse.setPath(requestUrl);
+        httpResponse.redirect("/");
     }
 
     public void show(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
