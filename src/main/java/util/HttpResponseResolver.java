@@ -98,14 +98,14 @@ public class HttpResponseResolver {
 
     private File getFileAt(String requestUrl) {
         return Arrays.stream(basePath)
-                .filter(basePath -> fileExistsAt(requestUrl, basePath))
+                .filter(basePath -> fileExistsAt(rootPath + basePath + requestUrl))
                 .findFirst()
                 .map(basePath -> new File((rootPath + basePath + requestUrl)))
                 .orElse(new File(rootPath + welcomePage));
     }
 
-    private boolean fileExistsAt(String requestUrl, String basePath) {
-        File f = new File(rootPath + basePath + requestUrl);
+    private boolean fileExistsAt(String filePath) {
+        File f = new File(filePath);
         if (!f.exists()) {
             return false;
         }

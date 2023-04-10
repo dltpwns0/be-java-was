@@ -5,7 +5,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import util.HttpMethod;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class HeadTest {
@@ -24,9 +27,11 @@ public class HeadTest {
         sb.append("Accept: */*").append("\n");
         sb.append("Content-Type: text").append("\n");
         sb.append("\n");
+        BufferedReader br = new BufferedReader(new StringReader(sb.toString()));
+
 
         // given
-        head = new HttpRequest(sb.toString());
+        head = new HttpRequest(br);
 
         // then
         assertThat(head.getMethod()).isEqualTo(HttpMethod.GET);
@@ -43,9 +48,9 @@ public class HeadTest {
         sb.append("Accept: */*").append("\n");
         sb.append("Content-Type: text").append("\n");
         sb.append("\n");
-
+        BufferedReader br = new BufferedReader(new StringReader(sb.toString()));
         // given
-        head = new HttpRequest(sb.toString());
+        head = new HttpRequest(br);
 
         // then
         assertThat(head.getHeaderElement("accept")).isEqualTo("*/*");
