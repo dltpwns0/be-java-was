@@ -34,18 +34,31 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            BufferedReader br = new BufferedReader(new InputStreamReader( in, StandardCharsets.UTF_8));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            StringBuilder stringBuilder = new StringBuilder();
+            String line = null;
+            while ((line = br.readLine()) != null) {
+//            while (!(line = br.readLine()).equals("")) {
+                stringBuilder.append(line);
+                logger.info("값이 들어왔어용 : {} ", line);
+            }
 
-            HttpRequest httpRequest = new HttpRequest(br);
-            HttpResponse httpResponse = new HttpResponse();
+            String postData = stringBuilder.toString();
+            logger.info("{}", postData);
+            logger.info("이건 뭥미?");
 
-            httpServlet.service(httpRequest, httpResponse);
+            logger.info("이건 뭥미?");
 
-            byte[] response = httpResponseResolver.resolve(httpResponse);
-
-            DataOutputStream dos = new DataOutputStream(out);
-            dos.write(response);
-            dos.flush();
+//            HttpRequest httpRequest = new HttpRequest(br);
+//            HttpResponse httpResponse = new HttpResponse();
+//
+//            httpServlet.service(httpRequest, httpResponse);
+//
+//            byte[] response = httpResponseResolver.resolve(httpResponse);
+//
+//            DataOutputStream dos = new DataOutputStream(out);
+//            dos.write(response);
+//            dos.flush();
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
