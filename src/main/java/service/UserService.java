@@ -6,8 +6,7 @@ import util.MyObjectMapper;
 
 public class UserService {
 
-    public void join(String requestParams) throws Exception {
-
+    public void join(Object requestParams) throws Exception {
         User user = MyObjectMapper.readValue(requestParams, User.class)
                 .filter(User.class::isInstance)
                 .map(User.class::cast)

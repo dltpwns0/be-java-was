@@ -1,5 +1,5 @@
 package util;
 
 public enum HttpMethod {
-    GET
+    GET, POST
 }
