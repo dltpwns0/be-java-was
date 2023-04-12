@@ -3,7 +3,7 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import util.HttpMethod;
+import type.HttpMethod;
 
 import java.io.BufferedReader;
 import java.io.IOException;

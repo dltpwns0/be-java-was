@@ -1,6 +1,6 @@
 package configure;
 
-import util.HttpResponseResolver;
+import webserver.HttpResponseResolver;
 
 public class ResolverConfigure {
 
