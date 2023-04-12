@@ -1,13 +1,6 @@
 package servlet;
 
-import configure.ResolverConfigure;
-import model.HttpRequest;
-import model.HttpResponse;
 import type.HttpMethod;
-import util.HttpRequestParser;
-import webserver.HttpResponseResolver;
-
-import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.Map;
 

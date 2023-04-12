@@ -15,7 +15,7 @@ public class HttpPostServlet implements HttpServlet{
 
     private void doPost(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
         // TODO : 바디가 존재하는 의미가 회원 생성을 의미하지는 않는다. (수정 필요)
-        if (httpRequest.hasBody()) {
+        if (httpRequest.getContentLength() > 0) {
             userController.createAsPost(httpRequest,httpResponse);
         }
     }

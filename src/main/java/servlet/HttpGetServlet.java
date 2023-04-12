@@ -15,7 +15,7 @@ public class HttpGetServlet implements HttpServlet {
 
 
     private void doGet(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
-        if (httpRequest.hasQuery()) {
+        if (httpRequest.getQueryString() != null) {
             userController.createAsGet(httpRequest, httpResponse);
             return;
         }
