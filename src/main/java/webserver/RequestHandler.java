@@ -2,7 +2,6 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 import configure.ResolverConfigure;
@@ -10,23 +9,28 @@ import model.HttpRequest;
 import model.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpResponseResolver;
+import servlet.HttpServlet;
+import servlet.HttpServletContainer;
+import util.HttpRequestParser;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
-    private HttpServlet httpServlet;
+    private HttpServletContainer httpServletContainer;
     private HttpResponseResolver httpResponseResolver;
     private ResolverConfigure resolverConfigure;
 
+    private HttpRequestParser httpRequestParser;
+
+
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        this.httpServlet = new HttpServlet();
+        this.httpServletContainer = new HttpServletContainer();
         this.httpResponseResolver = new HttpResponseResolver();
-        // TODO : 이러한 설정은 메인 함수에서 하는 것이 맞을 것 같다.
         this.resolverConfigure = new ResolverConfigure();
-        resolverConfigure.addMimeType(this.httpResponseResolver);
+        resolverConfigure.addMimeType(httpResponseResolver);
+        this.httpRequestParser = new HttpRequestParser();
     }
 
     public void run() {
@@ -36,12 +40,16 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader( in, StandardCharsets.UTF_8));
 
-            HttpRequest httpRequest = new HttpRequest(br);
+            HttpRequest httpRequest = httpRequestParser.parse(br);
             HttpResponse httpResponse = new HttpResponse();
+
+            String httpMethod = httpRequest.getMethod();
+            HttpServlet httpServlet = httpServletContainer.getServlet(httpMethod);
 
             httpServlet.service(httpRequest, httpResponse);
 
-            byte[] response = httpResponseResolver.resolve(httpResponse);
+            byte[] response =  httpResponseResolver.resolve(httpResponse);
+
 
             DataOutputStream dos = new DataOutputStream(out);
             dos.write(response);
