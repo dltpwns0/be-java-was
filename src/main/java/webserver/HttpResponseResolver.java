@@ -1,50 +1,73 @@
 package webserver;
 
 import model.HttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 public class HttpResponseResolver {
 
-    // TODO : serverIP가 여기에 있는게 맞나?
-    private final String serverIP = "http://localhost:8080";
+    Logger logger = LoggerFactory.getLogger(HttpResponseResolver.class);
 
     private final String rootPath = "src/main/resources/";
     private final String[] basePath = {"static", "templates"};
     private final String welcomePage = "templates/index.html";
 
+    // TODO : 더 효율적인 리다이렉트 방법을 생각해 보자
+    private final String redirectPage = "src/main/resources/static/redirectFile.txt";
+
+    private final String CONTENT_TYPE = "Content-Type";
+
+    private final String CONTENT_LENGTH = "Content-Length";
+
+    private final String REQUEST_URL = "Request-URL";
+
+    private final String LOCATION = "Location";
+
     private static Map<String, String> mime = new HashMap<>();
 
     public byte[] resolve(HttpResponse response) throws IOException {
-        if (response.hasRedirectUrl()) {
-            return resolve(response.getRedirectUrl());
+        File file = resolveFile(response);
+
+        resolveLocation(response);
+        resolveContentLength(response, file);
+        resolveContentType(response, file);
+
+        return resolve(response, file);
+    }
+
+    private void resolveLocation(HttpResponse response) {
+        if (response.getStatus() == HttpResponse.SC_FOUND) {
+            response.addHeader(LOCATION, response.getRedirectURL());
+        }
+    }
+
+    private void resolveContentLength(HttpResponse response, File file) {
+        response.addHeader(CONTENT_LENGTH, Long.toString(file.length()));
+    }
+
+    private void resolveContentType(HttpResponse response, File file) {
+        if (response.containHeader(CONTENT_TYPE)) {
+            return;
         }
 
-        File file = resolveFile(response);
-        String contentType = resolveContentType(response, file);
-
-        return resolve(file, contentType);
+        // TODO : 아래의 코드가 마음에 들지 않는다. (확장자 명을 이용한 contentType? 이럼 안되~)
+        String extension = getExtension(file);
+        response.addHeader(CONTENT_TYPE, mime.get(extension));
     }
 
-    public void addSupportedMimeType(String extension, String mimeType) {
-        mime.put(extension, mimeType);
-    }
-
-    private byte[] resolve(String redirectUrl) {
-        return resolveHead(redirectUrl);
-    }
-
-    private byte[] resolve(File file, String contentType) throws IOException {
+    private byte[] resolve(HttpResponse httpResponse, File file) throws IOException {
         byte[] body = resolveBody(file);
-        byte[] head = resolveHead(contentType, body.length);
+
+        byte[] head = resolveHead(httpResponse);
 
         ByteBuffer buffer = ByteBuffer.allocate(head.length + body.length);
         buffer.put(head);
@@ -52,17 +75,23 @@ public class HttpResponseResolver {
         return buffer.array();
     }
 
-    private File resolveFile(HttpResponse response) {
-        String path = response.getPath();
-        return getFileAt(path);
+    private byte[] resolveHead(HttpResponse httpResponse) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        // TODO : 아래의 Reason-Phrase 는 어떻게 하는게 좋을까? ( HTTP 버전은?)
+        stringBuilder.append("HTTP/1.1").append(" ").append(httpResponse.getStatus()).append(" ").append(httpResponse.getStatus()).append("\n");
+
+        Collection<String> headersName = httpResponse.getHeadersName();
+        for (String name : headersName) {
+            stringBuilder.append(name).append(":").append(httpResponse.getHead(name)).append("\n");
+        }
+        stringBuilder.append("\n");
+
+        return stringBuilder.toString().getBytes();
     }
 
-    private String resolveContentType(HttpResponse response, File file) {
-        if (response.getContentType() != null) {
-            return response.getContentType();
-        }
-        String extension = getExtension(file);
-        return mime.get(extension);
+    public byte[] resolveBody(File file) throws IOException {
+        return Files.readAllBytes(file.toPath());
     }
 
     private static String getExtension(File file) {
@@ -71,29 +100,12 @@ public class HttpResponseResolver {
         return fileName.substring(index + 1);
     }
 
-    private byte[] resolveHead(String redirectUrl) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        // TODO : 아래의 resolveHead 에서 중복이 보이는 것 같다.
-        stringBuilder.append("HTTP/1.1 302 OK)").append("\n");
-        stringBuilder.append("Location: ").append(serverIP).append(redirectUrl).append("\n");
-        stringBuilder.append("\n");
-        return stringBuilder.toString().getBytes();
-    }
-
-    private byte[] resolveHead(String contentType, int lengthOfBodyContent) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        // TODO : 왜 항상 200 OK? (예외 처리 로직 추가)
-        stringBuilder.append("HTTP/1.1 200 OK)").append("\n");
-        stringBuilder.append("Content-Type: ").append(contentType).append("\n");
-        stringBuilder.append("Content-Length: ").append(lengthOfBodyContent).append("\n");
-        stringBuilder.append("\n");
-        return stringBuilder.toString().getBytes();
-    }
-
-    public byte[] resolveBody(File file) throws IOException {
-        return Files.readAllBytes(file.toPath());
+    private File resolveFile(HttpResponse response) {
+        if (response.getStatus() == HttpResponse.SC_FOUND) {
+            return new File(redirectPage);
+        }
+        String path = response.getHead(REQUEST_URL);
+        return getFileAt(path);
     }
 
     private File getFileAt(String requestUrl) {
@@ -110,5 +122,9 @@ public class HttpResponseResolver {
             return false;
         }
         return f.isFile();
+    }
+
+    public void addSupportedMimeType(String extension, String mimeType) {
+        mime.put(extension, mimeType);
     }
 }
