@@ -43,8 +43,8 @@ public class RequestHandler implements Runnable {
             HttpRequest httpRequest = httpRequestParser.parse(br);
             HttpResponse httpResponse = new HttpResponse();
 
-            String httpMethod = httpRequest.getMethod();
-            HttpServlet httpServlet = httpServletContainer.getServlet(httpMethod);
+
+            HttpServlet httpServlet = httpServletContainer.getServlet(httpRequest);
 
             httpServlet.service(httpRequest, httpResponse);
 
