@@ -1,11 +1,11 @@
 package model;
 
-import type.HttpMethod;
+import type.RequestMethod;
 
 import java.util.Map;
 
 public class HttpRequest {
-    private HttpMethod method;
+    private RequestMethod method;
     private String pathInfo;
     private String queryString;
     private String version;
@@ -42,7 +42,7 @@ public class HttpRequest {
     }
 
     public void setMethod(String method) {
-        this.method = HttpMethod.getMethod(method);
+        this.method = RequestMethod.getMethod(method);
     }
 
     public String getQueryString() {

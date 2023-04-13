@@ -1,10 +1,12 @@
 package type;
 
-public enum HttpMethod {
+import java.util.Objects;
+
+public enum RequestMethod {
     GET("GET"), POST("POST");
 
     String method;
-    HttpMethod(String method) {
+    RequestMethod(String method) {
         this.method = method;
     }
 
@@ -12,7 +14,7 @@ public enum HttpMethod {
         return this.method;
     }
 
-    public static HttpMethod getMethod(String method) {
+    public static RequestMethod getMethod(String method) {
         if (method.equals("GET")) {
             return GET;
         }

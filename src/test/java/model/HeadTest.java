@@ -3,7 +3,7 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import type.HttpMethod;
+import type.RequestMethod;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class HeadTest {
 //        head = new HttpRequest(br);
 
         // then
-        assertThat(head.getMethod()).isEqualTo(HttpMethod.GET);
+        assertThat(head.getMethod()).isEqualTo(RequestMethod.GET);
         assertThat(head.getPathInfo()).isEqualTo("/index.html");
         assertThat(head.getQueryString()).isEqualTo("userId=cire&password=1234&name=이동준&email=dltpwns6@naver.com");
         assertThat(head.getVersion()).isEqualTo("HTTP1.1");

@@ -75,10 +75,6 @@ public class HttpRequestParser {
             String[] keyAndValue = pair.split("=");
             requestBody.put(keyAndValue[0], keyAndValue[1]);
         }
-
         request.setRequestBody(requestBody);
-
     }
-
-
 }
