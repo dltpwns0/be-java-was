@@ -11,7 +11,7 @@ public class RequestHandlerMapping {
     public static Method requestHandlerMapping(Class<?> controller, String url, RequestMethod requestMethod) {
         Method[] methods = controller.getMethods();
         RequestMapping controllerAnnotation = controller.getAnnotation(RequestMapping.class);
-        String[] basePath = controllerAnnotation.path();
+        String[] controllerPaths = controllerAnnotation.path();
 
         for (Method method : methods) {
             RequestMapping methodAnnotation = method.getAnnotation(RequestMapping.class);
@@ -21,7 +21,7 @@ public class RequestHandlerMapping {
             }
 
             String[] methodPaths = methodAnnotation.path();
-            for (String controllerPath : basePath) {
+            for (String controllerPath : controllerPaths) {
                 for (String methodPath : methodPaths) {
                     String path = controllerPath + methodPath;
                     if (url.startsWith(path)) {
