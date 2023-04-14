@@ -1,12 +1,10 @@
 package util;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class MyObjectMapperByString {
 
-    public static Optional<?> readValue(String requestParams, Class<?> userClass) throws Exception {// 사실 userClass 를 입력 받을 필요는 없지만, 공부를 위해 넣어 봤다.
+    public static Optional<?> readValue(String requestParams, Class<?> userClass) throws Exception {
         Map<String, String> requestParamMap = parseRequestParams(requestParams);
 
         return MyObjectMapperByMap.readValue(requestParamMap, userClass);

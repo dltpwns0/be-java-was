@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MyObjectMapperByMap {
-    public static Optional<?> readValue(Map<String, String> requestParams, Class<?> userClass) throws Exception {// 사실 userClass 를 입력 받을 필요는 없지만, 공부를 위해 넣어 봤다.
+    public static Optional<?> readValue(Map<String, String> requestParams, Class<?> userClass) throws Exception {
 
         Map<String, Class<?>> mappedFields = getMappedFields(userClass);
         List<Object> constructorArguments = getConstructorArguments(requestParams, mappedFields);
