@@ -1,7 +1,9 @@
 package model;
 
+import session.Cookie;
 import type.RequestMethod;
 
+import java.util.Collection;
 import java.util.Map;
 
 public class HttpRequest {
@@ -10,11 +12,19 @@ public class HttpRequest {
     private String queryString;
     private String version;
 
+    private Collection<Cookie> cookies;
 
     private Map<String, String> requestHeaders;
     private Map<String, String> requestBody;
 
-    public HttpRequest() {};
+
+    public Collection<Cookie> getCookies() {
+        return this.cookies;
+    }
+
+    public void setCookies(Collection<Cookie> cookies) {
+        this.cookies = cookies;
+    }
 
     public void requestHeaders(Map<String, String> requestHeaders) {
         this.requestHeaders = requestHeaders;

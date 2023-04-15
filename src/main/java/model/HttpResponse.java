@@ -1,5 +1,7 @@
 package model;
 
+import session.Cookie;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,6 +13,8 @@ public class HttpResponse {
     public static int SC_CREATE  = 201;
     public static int SC_FOUND = 302;
     public static int SC_NOT_FOUND = 404;
+
+    private Collection<Cookie> cookies;
 
     private String redirectURL;
 
@@ -24,6 +28,14 @@ public class HttpResponse {
 
         // TODO : 처음부터 OK 상태가 맞는지 나중에 다시 한번 생각해보기
         statusCode = SC_OK;
+    }
+
+    public void addCookie(Cookie cookie) {
+        this.cookies.add(cookie);
+    }
+
+    public Collection<Cookie> getCookies() {
+        return this.cookies;
     }
 
     public boolean containHeader(String name) {
