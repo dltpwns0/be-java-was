@@ -3,6 +3,7 @@ package webserver;
 import model.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import session.Cookie;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +32,8 @@ public class HttpResponseResolver {
     private final String REQUEST_URL = "Request-URL";
 
     private final String LOCATION = "Location";
+
+    private final String SET_COOKIE = "Set-Cookie";
 
     private static Map<String, String> mime = new HashMap<>();
 
@@ -81,13 +84,30 @@ public class HttpResponseResolver {
         // TODO : 아래의 Reason-Phrase 는 어떻게 하는게 좋을까? ( HTTP 버전은?)
         stringBuilder.append("HTTP/1.1").append(" ").append(httpResponse.getStatus()).append(" ").append(httpResponse.getStatus()).append("\n");
 
+        // 응답 헤더 추가
+        resolveHeader(httpResponse, stringBuilder);
+
+        // 응답 쿠키 추가
+        resolveCookie(httpResponse, stringBuilder);
+        
+        stringBuilder.append("\n");
+
+        return stringBuilder.toString().getBytes();
+    }
+
+    private static void resolveHeader(HttpResponse httpResponse, StringBuilder stringBuilder) {
         Collection<String> headersName = httpResponse.getHeadersName();
         for (String name : headersName) {
             stringBuilder.append(name).append(":").append(httpResponse.getHead(name)).append("\n");
         }
-        stringBuilder.append("\n");
+    }
 
-        return stringBuilder.toString().getBytes();
+    private void resolveCookie(HttpResponse httpResponse, StringBuilder stringBuilder) {
+        Collection<Cookie> cookies = httpResponse.getCookies();
+        for (Cookie cookie : cookies) {
+            stringBuilder.append(SET_COOKIE).append(":").append(cookie).append("\n");
+        }
+
     }
 
     public byte[] resolveBody(File file) throws IOException {
