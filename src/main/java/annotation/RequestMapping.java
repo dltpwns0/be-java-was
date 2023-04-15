@@ -1,6 +1,5 @@
 package annotation;
 
-
 import type.RequestMethod;
 
 import java.lang.annotation.ElementType;

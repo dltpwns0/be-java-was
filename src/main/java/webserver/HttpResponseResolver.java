@@ -89,7 +89,7 @@ public class HttpResponseResolver {
 
         // 응답 쿠키 추가
         resolveCookie(httpResponse, stringBuilder);
-        
+
         stringBuilder.append("\n");
 
         return stringBuilder.toString().getBytes();
