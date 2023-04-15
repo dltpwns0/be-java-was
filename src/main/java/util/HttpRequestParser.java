@@ -1,13 +1,13 @@
 package util;
 
 import model.HttpRequest;
+import session.Cookie;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class HttpRequestParser {
 
@@ -15,12 +15,18 @@ public class HttpRequestParser {
     private final Integer PATH_INDEX = 1;
     private final Integer QUERY_INDEX = 2;
 
+    private final Integer KEY_INDEX = 0;
+
+    private final Integer VALUE_INDEX = 1;
+
+    private final String COOKIE = "Cookie";
+
     public HttpRequest parse(BufferedReader bufferedReader) throws IOException {
         HttpRequest request = new HttpRequest();
 
         parseRequestLine(request, bufferedReader);
         parseRequestHeaders(request, bufferedReader);
-        parseBody(request, bufferedReader);
+        parseRequestBody(request, bufferedReader);
 
         return request;
     }
@@ -47,18 +53,36 @@ public class HttpRequestParser {
         Map<String, String> requestHeaders = new HashMap<>();
         String line = null;
         while (!(line = bufferedReader.readLine()).equals("")) {
-            // TODO 헤더 바디에서, 하나의 헤더 요소의 값들은 1개 이상일 수 있다. 수정 필요
-
-            List<String> headerElement = Arrays.stream(line.split(":"))
-                    .map(String::trim)
-                    .collect(Collectors.toList());
-
-            requestHeaders.put(headerElement.get(0), headerElement.get(1));
+            addRequestHeaders(request, requestHeaders, line);
         }
         request.requestHeaders(requestHeaders);
     }
 
-    private void parseBody(HttpRequest request, BufferedReader bufferedReader) throws IOException {
+    private void addRequestHeaders(HttpRequest request, Map<String, String> requestHeaders, String line) {
+        String[] headerElements = line.split(":");
+        String headerName = headerElements[KEY_INDEX].trim();
+        String headerValue = headerElements[VALUE_INDEX].trim();
+        if (headerName.equals(COOKIE)) {
+            addCookies(request, headerValue);
+            return;
+        }
+        requestHeaders.put(headerName, headerValue);
+    }
+
+    private void addCookies(HttpRequest request, String headerValue) {
+        Collection<Cookie> cookieList = new ArrayList<>();
+        String[] cookies = headerValue.split(";");
+        for (String cookie : cookies) {
+            String[] cookieElements = cookie.split("=");
+            String cookieName = cookieElements[KEY_INDEX].trim();
+            String cookieValue = cookieElements[VALUE_INDEX].trim();
+            cookieList.add(new Cookie(cookieName, cookieValue));
+        }
+        request.setCookies(cookieList);
+        return;
+    }
+
+    private void parseRequestBody(HttpRequest request, BufferedReader bufferedReader) throws IOException {
         int contentLength = request.getContentLength();
         if (contentLength <= 0) {
             return;
