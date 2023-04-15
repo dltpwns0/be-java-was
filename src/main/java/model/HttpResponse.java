@@ -12,6 +12,8 @@ public class HttpResponse {
     public static int SC_OK = 200;
     public static int SC_CREATE  = 201;
     public static int SC_FOUND = 302;
+    public static int SC_SEE_OTHER = 303;
+    public static int SC_UNAUTHORIZED = 401;
     public static int SC_NOT_FOUND = 404;
 
     private Collection<Cookie> cookies;
@@ -25,6 +27,7 @@ public class HttpResponse {
 
     public HttpResponse() {
         this.headers = new HashMap<>();
+        cookies = new ArrayList<>();
 
         // TODO : 처음부터 OK 상태가 맞는지 나중에 다시 한번 생각해보기
         statusCode = SC_OK;
