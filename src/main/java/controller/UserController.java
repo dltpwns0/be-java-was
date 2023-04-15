@@ -9,6 +9,7 @@ import session.SessionManager;
 import type.RequestMethod;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RequestMapping(path = "/user")
 public class UserController implements Controller {
@@ -35,14 +36,15 @@ public class UserController implements Controller {
         String userId = requestBody.get("userId");
         String password = requestBody.get("password");
 
-        User user = userService.login(userId, password);
+        // TODO : Optional 을 사용하는게 좋을까?
+        Optional<User> user = userService.login(userId, password);
 
-        if (user == null) {
+        if (user.isEmpty()) {
             httpResponse.sendRedirect("/user/login_failed.html");
             httpResponse.setStatus(HttpResponse.SC_UNAUTHORIZED);
             return;
         }
-        sessionManager.createSession(user,httpResponse);
+        sessionManager.createSession(user.get(),httpResponse);
         httpResponse.sendRedirect("/");
     }
 

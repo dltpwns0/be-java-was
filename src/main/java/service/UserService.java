@@ -4,8 +4,6 @@ import db.Database;
 import model.User;
 import util.MyObjectMapper;
 
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.Optional;
 
 public class UserService {
@@ -19,10 +17,9 @@ public class UserService {
         Database.addUser(user);
     }
 
-    public User login(String userId, String password) {
-        return Optional.of(Database.findUserById(userId))
-                .filter(user -> user.getPassword().equals(password))
-                .orElse(null);
+    public Optional<User> login(String userId, String password) {
+        User user = Database.findUserById(userId);
+        return Optional.ofNullable(user).filter(u -> u.getPassword().equals(password));
     }
 
 }
