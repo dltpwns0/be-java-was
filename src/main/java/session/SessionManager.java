@@ -2,14 +2,14 @@ package session;
 
 import model.HttpRequest;
 import model.HttpResponse;
+import webserver.RequestHandler;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class SessionManager {
 
-    public static final String SESSION_COOKIE_NAME = "mySessionId";
+    public static final String SESSION_COOKIE_NAME = "SID";
 
     private final Map<String, Object> sessionStore;
 
@@ -22,8 +22,9 @@ public class SessionManager {
         String sessionId = UUID.randomUUID().toString();
         sessionStore.put(sessionId, value);
 
-        Cookie mySessionCookie = new Cookie(SESSION_COOKIE_NAME, sessionId);
-        httpResponse.addCookie(mySessionCookie);
+        Cookie cookie = new Cookie(SESSION_COOKIE_NAME, sessionId);
+        cookie.setPath("/");
+        httpResponse.addCookie(cookie);
     }
 
     public Object getSession(HttpRequest httpRequest) {
