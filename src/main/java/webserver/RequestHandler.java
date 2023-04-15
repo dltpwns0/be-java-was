@@ -9,24 +9,23 @@ import model.HttpRequest;
 import model.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import servlet.HttpServlet;
-import servlet.HttpServletContainer;
+import servlet.DispatcherServlet;
 import util.HttpRequestParser;
 
 public class RequestHandler implements Runnable {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
-    private HttpServletContainer httpServletContainer;
     private HttpResponseResolver httpResponseResolver;
     private HttpRequestParser httpRequestParser;
+    private DispatcherServlet dispatcherServlet;
 
 
     public RequestHandler(Socket connectionSocket, ApplicationContext applicationContext) {
         this.connection = connectionSocket;
-        this.httpServletContainer = (HttpServletContainer) applicationContext.getBean("httpServletContainer");
         this.httpResponseResolver = (HttpResponseResolver) applicationContext.getBean("httpResponseResolver");
         this.httpRequestParser = (HttpRequestParser) applicationContext.getBean("httpRequestParser");
+        this.dispatcherServlet= (DispatcherServlet) applicationContext.getBean("dispatcherServlet");
     }
 
     public void run() {
@@ -37,10 +36,7 @@ public class RequestHandler implements Runnable {
             HttpRequest httpRequest = httpRequestParser.parse(br);
             HttpResponse httpResponse = new HttpResponse();
 
-
-            HttpServlet httpServlet = httpServletContainer.getServlet(httpRequest);
-
-            httpServlet.service(httpRequest, httpResponse);
+            dispatcherServlet.service(httpRequest, httpResponse);
 
             byte[] response =  httpResponseResolver.resolve(httpResponse);
 
