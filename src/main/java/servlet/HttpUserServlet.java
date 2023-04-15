@@ -1,6 +1,7 @@
 package servlet;
 
 import annotation.RequestMapping;
+import controller.Controller;
 import controller.UserController;
 import model.HttpRequest;
 import model.HttpResponse;
@@ -13,7 +14,12 @@ import java.lang.reflect.Method;
 
 @RequestMapping(path = "/user")
 public class HttpUserServlet implements HttpServlet {
-    private final UserController userController = new UserController();
+
+    private final Controller userController;
+
+    public HttpUserServlet(Controller controller) {
+        this.userController = controller;
+    }
 
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -31,6 +37,4 @@ public class HttpUserServlet implements HttpServlet {
 
         method.invoke(userController, httpRequest, httpResponse);
     }
-
-
 }

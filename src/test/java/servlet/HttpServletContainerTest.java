@@ -1,5 +1,7 @@
 package servlet;
 
+import configure.AppConfigure;
+import configure.ApplicationContext;
 import model.HttpRequest;
 import model.HttpResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +12,7 @@ import util.HttpRequestParser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,12 +26,15 @@ class HttpServletContainerTest {
     HttpServletContainer httpServletContainer;
 
     @BeforeEach
-    public void beforeEach() throws IOException {
+    public void beforeEach() throws IOException, InvocationTargetException, IllegalAccessException {
         sb = new StringBuilder();
         httpRequestParser = new HttpRequestParser();
         httpResponse = null;
 
-        httpServletContainer = new HttpServletContainer();
+        AppConfigure appConfigure = new AppConfigure();
+        ApplicationContext applicationContext = new ApplicationContext(appConfigure);
+
+        httpServletContainer = (HttpServletContainer) applicationContext.getBean("httpServletContainer");
     }
 
     @Test
