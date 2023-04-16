@@ -16,14 +16,12 @@ public class RequestHandler implements Runnable {
     public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
-    private HttpResponseResolver httpResponseResolver;
     private HttpRequestParser httpRequestParser;
     private DispatcherServlet dispatcherServlet;
 
 
     public RequestHandler(Socket connectionSocket, ApplicationContext applicationContext) {
         this.connection = connectionSocket;
-        this.httpResponseResolver = (HttpResponseResolver) applicationContext.getBean("httpResponseResolver");
         this.httpRequestParser = (HttpRequestParser) applicationContext.getBean("httpRequestParser");
         this.dispatcherServlet= (DispatcherServlet) applicationContext.getBean("dispatcherServlet");
     }

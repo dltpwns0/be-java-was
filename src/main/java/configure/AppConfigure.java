@@ -8,7 +8,6 @@ import session.SessionManager;
 import util.HttpRequestParser;
 import view.View;
 import view.ViewResolver;
-import webserver.HttpResponseResolver;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,15 +15,6 @@ import java.util.HashMap;
 
 // TODO : 현재는 싱글톤 처럼 동작하지는 않는다.
 public class AppConfigure {
-
-    @Bean(name = "httpResponseResolver")
-    public HttpResponseResolver httpResponseResolver() {
-        ResolverConfigure resolverConfigure = new ResolverConfigure();
-        HttpResponseResolver httpResponseResolver = new HttpResponseResolver();
-        // TODO : 바꿔야 함
-        resolverConfigure.addMimeType(httpResponseResolver);
-        return httpResponseResolver;
-    }
 
     @Bean(name = "httpRequestParser")
     public HttpRequestParser httpRequestParser() {
