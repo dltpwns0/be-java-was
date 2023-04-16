@@ -6,6 +6,8 @@ import controller.UserController;
 import servlet.DispatcherServlet;
 import session.SessionManager;
 import util.HttpRequestParser;
+import view.View;
+import view.ViewResolver;
 import webserver.HttpResponseResolver;
 
 import java.util.ArrayList;
@@ -34,7 +36,9 @@ public class AppConfigure {
         Collection<Controller> controllers = new ArrayList<>();
         controllers.add(new UserController(sessionManager()));
 
-        return new DispatcherServlet(controllers);
+        return new DispatcherServlet(
+                controllers,
+                viewResolver());
     }
 
     //========
@@ -42,5 +46,9 @@ public class AppConfigure {
     public SessionManager sessionManager() {
         return new SessionManager(new HashMap<>());
     }
+
+    public ViewResolver viewResolver() {return new ViewResolver(view());};
+
+    public View view() {return new View();};
 
 }

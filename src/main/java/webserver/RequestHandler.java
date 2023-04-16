@@ -34,16 +34,11 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader( in, StandardCharsets.UTF_8));
 
             HttpRequest httpRequest = httpRequestParser.parse(br);
-            HttpResponse httpResponse = new HttpResponse();
+            HttpResponse httpResponse = new HttpResponse(out);
 
             dispatcherServlet.service(httpRequest, httpResponse);
 
-            byte[] response =  httpResponseResolver.resolve(httpResponse);
 
-
-            DataOutputStream dos = new DataOutputStream(out);
-            dos.write(response);
-            dos.flush();
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

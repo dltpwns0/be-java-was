@@ -22,16 +22,17 @@ public class UserController implements Controller {
     }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
-    public void create(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
+    public String create(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
         String requestUrl = httpRequest.getPathInfo();
         Map<String, String> requestParams = httpRequest.getRequestBody();
         userService.join(requestParams);
         httpResponse.sendRedirect("/");
         httpResponse.setStatus(HttpResponse.SC_SEE_OTHER);
+        return null;
     }
 
     @RequestMapping(path = "/login", method = RequestMethod.POST)
-    public void login(HttpRequest httpRequest, HttpResponse httpResponse) {
+    public String login(HttpRequest httpRequest, HttpResponse httpResponse) {
         Map<String, String> requestBody = httpRequest.getRequestBody();
         String userId = requestBody.get("userId");
         String password = requestBody.get("password");
@@ -40,17 +41,15 @@ public class UserController implements Controller {
         Optional<User> user = userService.login(userId, password);
 
         if (user.isEmpty()) {
-            httpResponse.sendRedirect("/user/login_failed.html");
             httpResponse.setStatus(HttpResponse.SC_UNAUTHORIZED);
-            return;
+            return "/user/login_failed.html";
         }
         sessionManager.createSession(user.get(),httpResponse);
-        httpResponse.sendRedirect("/");
+        return "/";
     }
 
     @RequestMapping()
-    public void show(HttpRequest httpRequest, HttpResponse httpResponse) {
-        String requestUrl = httpRequest.getPathInfo();
-        httpResponse.addHeader("Request-URL", requestUrl);
+    public String show(HttpRequest httpRequest, HttpResponse httpResponse) {
+        return httpRequest.getPathInfo();
     }
 }

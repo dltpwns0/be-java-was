@@ -2,6 +2,7 @@ package model;
 
 import session.Cookie;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,13 +25,25 @@ public class HttpResponse {
 
     private Map<String, String> headers;
 
+    private OutputStream outputStream;
 
-    public HttpResponse() {
+
+
+    public HttpResponse(OutputStream outputStream) {
         this.headers = new HashMap<>();
-        cookies = new ArrayList<>();
+        this.cookies = new ArrayList<>();
+        this.outputStream = outputStream;
 
         // TODO : 처음부터 OK 상태가 맞는지 나중에 다시 한번 생각해보기
         statusCode = SC_OK;
+    }
+
+    public OutputStream getOutputStream() {
+        return outputStream;
+    }
+
+    public void setOutputStream(OutputStream outputStream) {
+        this.outputStream = outputStream;
     }
 
     public void addCookie(Cookie cookie) {
