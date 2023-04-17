@@ -3,7 +3,7 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import type.RequestMethod;
+import util.HttpRequestParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,13 +11,14 @@ import java.io.StringReader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Deprecated
-public class HeadTest {
+public class HeadParserTest {
     StringBuilder sb;
     HttpRequest head;
+    HttpRequestParser httpRequestParser;
     @BeforeEach
     public void beforeEach() throws IOException {
         sb = new StringBuilder();
+        httpRequestParser = new HttpRequestParser();
 
     }
     @Test
@@ -32,10 +33,10 @@ public class HeadTest {
 
 
         // given
-//        head = new HttpRequest(br);
+        head = httpRequestParser.parse(br);
 
         // then
-        assertThat(head.getMethod()).isEqualTo(RequestMethod.GET);
+        assertThat(head.getMethod()).isEqualTo("GET");
         assertThat(head.getPathInfo()).isEqualTo("/index.html");
         assertThat(head.getQueryString()).isEqualTo("userId=cire&password=1234&name=이동준&email=dltpwns6@naver.com");
         assertThat(head.getVersion()).isEqualTo("HTTP1.1");
@@ -51,10 +52,10 @@ public class HeadTest {
         sb.append("\n");
         BufferedReader br = new BufferedReader(new StringReader(sb.toString()));
         // given
-//        head = new HttpRequest(br);
+        head = httpRequestParser.parse(br);
 
         // then
-        assertThat(head.getHeaderElement("accept")).isEqualTo("*/*");
+        assertThat(head.getHeaderElement("Accept")).isEqualTo("*/*");
         assertThat(head.getHeaderElement("Content-Type")).isEqualTo("text");
     }
 }
