@@ -11,7 +11,7 @@ public class ApplicationContext {
 
     private final Map<String, Object> beanMap;
 
-    public ApplicationContext(AppConfigure appConfigure) throws InvocationTargetException, IllegalAccessException {
+    public ApplicationContext(AppConfiguration appConfigure) throws InvocationTargetException, IllegalAccessException {
         beanMap = new HashMap<>();
 
         Method[] methods = appConfigure.getClass().getMethods();
@@ -26,7 +26,7 @@ public class ApplicationContext {
         return beanMap.get(beanName);
     }
 
-    private void addBean(AppConfigure appConfigure, Method method) throws IllegalAccessException, InvocationTargetException {
+    private void addBean(AppConfiguration appConfigure, Method method) throws IllegalAccessException, InvocationTargetException {
         Bean bean = method.getAnnotation(Bean.class);
         if (bean == null) {
             return;

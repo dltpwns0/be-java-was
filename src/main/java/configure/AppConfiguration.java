@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 // TODO : 현재는 싱글톤 처럼 동작하지는 않는다.
-public class AppConfigure {
+public class AppConfiguration {
 
     @Bean(name = "httpRequestParser")
     public HttpRequestParser httpRequestParser() {
