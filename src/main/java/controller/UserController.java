@@ -26,9 +26,8 @@ public class UserController implements Controller {
         String requestUrl = httpRequest.getPathInfo();
         Map<String, String> requestParams = httpRequest.getRequestBody();
         userService.join(requestParams);
-        httpResponse.sendRedirect("/");
         httpResponse.setStatus(HttpResponse.SC_SEE_OTHER);
-        return null;
+        return "redirect:/";
     }
 
     @RequestMapping(path = "/login", method = RequestMethod.POST)
@@ -40,11 +39,10 @@ public class UserController implements Controller {
         Optional<User> user = userService.login(userId, password);
 
         if (user.isEmpty()) {
-            httpResponse.setStatus(HttpResponse.SC_UNAUTHORIZED);
-            return "/user/login_failed.html";
+            return "redirect:/user/login_failed.html";
         }
         sessionManager.createSession(user.get(),httpResponse);
-        return "/";
+        return "redirect:/";
     }
 
     @RequestMapping()

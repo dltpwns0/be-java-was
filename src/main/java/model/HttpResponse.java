@@ -33,9 +33,6 @@ public class HttpResponse {
         this.headers = new HashMap<>();
         this.cookies = new ArrayList<>();
         this.outputStream = outputStream;
-
-        // TODO : 처음부터 OK 상태가 맞는지 나중에 다시 한번 생각해보기
-        statusCode = SC_OK;
     }
 
     public OutputStream getOutputStream() {
