@@ -3,9 +3,12 @@ package configure;
 import annotation.Bean;
 import controller.Controller;
 import controller.UserController;
+import org.checkerframework.checker.units.qual.C;
 import servlet.DispatcherServlet;
 import session.SessionManager;
 import util.HttpRequestParser;
+import view.RedirectView;
+import view.ResponseView;
 import view.View;
 import view.ViewResolver;
 
@@ -37,8 +40,12 @@ public class AppConfiguration {
         return new SessionManager(new HashMap<>());
     }
 
-    public ViewResolver viewResolver() {return new ViewResolver(view());};
+    public ViewResolver viewResolver() {
+        Collection<View> views = new ArrayList<>();
 
-    public View view() {return new View();};
-
+        // TODO : 아래의 순서를 지켜줘야 하는 문제가 있음
+        views.add(new RedirectView("redirect:/"));
+        views.add(new ResponseView("/"));
+        return new ViewResolver(views);
+    }
 }
