@@ -33,9 +33,8 @@ public class UserController implements Controller {
 
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public String login(HttpRequest httpRequest, HttpResponse httpResponse) {
-        Map<String, String> requestBody = httpRequest.getRequestBody();
-        String userId = requestBody.get("userId");
-        String password = requestBody.get("password");
+        String userId = httpRequest.getParameter("userId");
+        String password = httpRequest.getParameter("password");
 
         // TODO : Optional 을 사용하는게 좋을까?
         Optional<User> user = userService.login(userId, password);

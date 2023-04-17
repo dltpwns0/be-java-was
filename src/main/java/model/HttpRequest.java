@@ -7,6 +7,9 @@ import java.util.Collection;
 import java.util.Map;
 
 public class HttpRequest {
+
+    private final String CONTENT_LENGTH = "Content-Length";
+
     private RequestMethod method;
     private String pathInfo;
     private String queryString;
@@ -43,7 +46,7 @@ public class HttpRequest {
     }
 
     public int getContentLength() {
-        String contentLength = requestHeaders.get("Content-Length");
+        String contentLength = requestHeaders.get(CONTENT_LENGTH);
         return contentLength != null ? Integer.parseInt(contentLength) : 0;
     }
 
@@ -51,15 +54,19 @@ public class HttpRequest {
         return requestHeaders.get(key);
     }
 
-    public void setMethod(String method) {
-        this.method = RequestMethod.getMethod(method);
-    }
-
     public String getQueryString() {
         return queryString;
     }
 
     public Map<String, String> getRequestBody() { return requestBody; };
+
+    public String getParameter(String parameter) {
+        return requestBody.get(parameter);
+    }
+
+    public void setMethod(String method) {
+        this.method = RequestMethod.getMethod(method);
+    }
     public void setVersion(String version) {
         this.version = version;
     }
