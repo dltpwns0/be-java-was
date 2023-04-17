@@ -28,10 +28,9 @@ public class ApplicationContext {
 
     private void addBean(AppConfiguration appConfigure, Method method) throws IllegalAccessException, InvocationTargetException {
         Bean bean = method.getAnnotation(Bean.class);
-        if (bean == null) {
-            return;
+     
+        if (bean != null) {
+            beanMap.put(bean.name(), method.invoke(appConfigure));
         }
-        String beanName = bean.name();
-        beanMap.put(beanName, method.invoke(appConfigure));
     }
 }
