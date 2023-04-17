@@ -4,56 +4,39 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-import configure.ResolverConfigure;
+import configure.ApplicationContext;
 import model.HttpRequest;
 import model.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import servlet.HttpServlet;
-import servlet.HttpServletContainer;
+import servlet.DispatcherServlet;
 import util.HttpRequestParser;
 
 public class RequestHandler implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    public static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
-    private HttpServletContainer httpServletContainer;
-    private HttpResponseResolver httpResponseResolver;
-    private ResolverConfigure resolverConfigure;
-
     private HttpRequestParser httpRequestParser;
+    private DispatcherServlet dispatcherServlet;
 
 
-    public RequestHandler(Socket connectionSocket) {
+    public RequestHandler(Socket connectionSocket, ApplicationContext applicationContext) {
         this.connection = connectionSocket;
-        this.httpServletContainer = new HttpServletContainer();
-        this.httpResponseResolver = new HttpResponseResolver();
-        this.resolverConfigure = new ResolverConfigure();
-        resolverConfigure.addMimeType(httpResponseResolver);
-        this.httpRequestParser = new HttpRequestParser();
+        this.httpRequestParser = (HttpRequestParser) applicationContext.getBean("httpRequestParser");
+        this.dispatcherServlet= (DispatcherServlet) applicationContext.getBean("dispatcherServlet");
     }
 
     public void run() {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader( in, StandardCharsets.UTF_8));
 
             HttpRequest httpRequest = httpRequestParser.parse(br);
-            HttpResponse httpResponse = new HttpResponse();
+            HttpResponse httpResponse = new HttpResponse(out);
+
+            dispatcherServlet.service(httpRequest, httpResponse);
 
 
-            HttpServlet httpServlet = httpServletContainer.getServlet(httpRequest);
-
-            httpServlet.service(httpRequest, httpResponse);
-
-            byte[] response =  httpResponseResolver.resolve(httpResponse);
-
-
-            DataOutputStream dos = new DataOutputStream(out);
-            dos.write(response);
-            dos.flush();
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

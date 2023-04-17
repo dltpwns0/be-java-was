@@ -4,6 +4,8 @@ import db.Database;
 import model.User;
 import util.MyObjectMapper;
 
+import java.util.Optional;
+
 public class UserService {
 
     public void join(Object requestParams) throws Exception {
@@ -14,4 +16,10 @@ public class UserService {
 
         Database.addUser(user);
     }
+
+    public Optional<User> login(String userId, String password) {
+        User user = Database.findUserById(userId);
+        return Optional.ofNullable(user).filter(u -> u.getPassword().equals(password));
+    }
+
 }
