@@ -1,6 +1,6 @@
 package view;
 
-import model.HttpResponse;
+import servlet.HttpResponse;
 import session.Cookie;
 
 import java.io.IOException;

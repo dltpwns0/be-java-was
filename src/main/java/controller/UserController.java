@@ -1,8 +1,8 @@
 package controller;
 
 import annotation.RequestMapping;
-import model.HttpRequest;
-import model.HttpResponse;
+import servlet.HttpRequest;
+import servlet.HttpResponse;
 import model.User;
 import service.UserService;
 import session.SessionManager;

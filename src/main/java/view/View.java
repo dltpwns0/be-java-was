@@ -1,6 +1,6 @@
 package view;
 
-import model.HttpResponse;
+import servlet.HttpResponse;
 
 import java.io.IOException;
 

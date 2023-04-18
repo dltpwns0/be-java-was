@@ -2,8 +2,6 @@ package servlet;
 
 import controller.Controller;
 import controller.UserController;
-import model.HttpRequest;
-import model.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import type.RequestMethod;
@@ -50,7 +48,6 @@ public class DispatcherServlet implements HttpServlet {
         View resolve = viewResolver.resolve(viewName);
 
         resolve.render(viewName, httpResponse);
-
     }
 
     private void defaultService(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {

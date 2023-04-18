@@ -1,4 +1,4 @@
-package model;
+package servlet;
 
 import session.Cookie;
 import type.RequestMethod;

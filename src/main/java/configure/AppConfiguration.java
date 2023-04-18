@@ -39,7 +39,6 @@ public class AppConfiguration {
     public SessionManager sessionManager() {
         return new SessionManager(new HashMap<>());
     }
-
     public ViewResolver viewResolver() {
         Collection<View> views = new ArrayList<>();
 
