@@ -4,53 +4,31 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MyLittleMustache {
+public  class MyLittleMustache {
 
-    Interpreter interpreter;
-    public MyLittleMustache(Interpreter interpreter) {
-        this.interpreter = interpreter;
+    private static final String OBJECT_AND_METHOD = "\\{\\{\\s*([^#^}^/\\s]+)\\s*\\}\\}";
+    private static final String SECTION = "\\{\\{\\s*\\#(.*?)\\s*\\}\\}((?s).*?)\\{\\{\\s*\\/(\\1)\\s*\\}\\}";
+    private static final String INVERSE_SECTION = "\\{\\{\\s*\\^(.*?)\\s*\\}\\}((?s).*?)\\{\\{\\s*\\/(\\1)\\s*\\}\\}";
+
+    private static final int GROUP_ONE = 1;
+    private static final int GROUP_TWO = 2;
+
+
+    public static String render(Map<String, ?> model, String template) {
+
+        Interpreter interpreter = new Interpreter(model);
+
+        template = replaceSection(interpreter, template);
+
+        template = replaceInverseSection(interpreter, template);
+
+        template = replaceObjectAndMethod(interpreter, template);
+        return template;
     }
 
-    private final String OBJECT_AND_METHOD = "\\{\\{\\s*([^#^}^/\\s]+)\\s*\\}\\}";
-    private final String SECTION = "\\{\\{\\s*\\#(.*?)\\s*\\}\\}((?s).*?)\\{\\{\\s*\\/(\\1)\\s*\\}\\}";
-
-
-    private final String NULL_STRING = "";
-
-    private final String TRUE = "true";
-    private final String FALSE = "false";
-
-    private Pattern pattern;
-    private final int GROUP_ZERO = 0;
-    private final int GROUP_ONE = 1;
-    private final int GROUP_TWO = 2;
-    private final int GROUP_THREE = 3;
-
-
-    public String render(String html) {
-
-        html = replaceSection(html);
-
-        html = replaceObjectAndMethod(html);
-        return html;
-    }
-
-    private String replaceCondition(String html, Map<String, Collection<String>> map, String condition) {
-        for (String key : map.keySet()) {
-            String interpret = interpreter.interpretValue(key);
-            ArrayList<String> context = (ArrayList<String>) map.get(key);
-            if (interpret.equals(condition)) {
-                html = html.replace(context.get(GROUP_ZERO), context.get(GROUP_ONE));
-                continue;
-            }
-            html = html.replace(context.get(GROUP_ZERO), NULL_STRING);
-        }
-        return html;
-    }
-
-    private String replaceSection(String template) {
+    private static String replaceSection(Interpreter interpreter, String template) {
         StringBuilder output = new StringBuilder();
-        pattern = Pattern.compile(SECTION);
+        Pattern pattern = Pattern.compile(SECTION);
         Matcher matcher = pattern.matcher(template);
 
         while (matcher.find()) {
@@ -72,9 +50,9 @@ public class MyLittleMustache {
                 Collection<Object> objects = (Collection<Object>) object;
                 String context = matcher.group(GROUP_TWO);
                 StringBuilder tempOutput = new StringBuilder();
-                pattern = Pattern.compile(OBJECT_AND_METHOD);
+                Pattern patternIterator = Pattern.compile(OBJECT_AND_METHOD);
                 for (Object o : objects) {
-                    Matcher matcherOfIterator = pattern.matcher(context);
+                    Matcher matcherOfIterator = patternIterator.matcher(context);
                     StringBuilder matchOutput = new StringBuilder();
                     while (matcherOfIterator.find()) {
                         String methodName = matcherOfIterator.group(GROUP_ONE);
@@ -93,9 +71,34 @@ public class MyLittleMustache {
         return output.toString();
     }
 
-    private String replaceObjectAndMethod(String template) {
+    private static String replaceInverseSection(Interpreter interpreter, String template) {
         StringBuilder output = new StringBuilder();
-        pattern = Pattern.compile(OBJECT_AND_METHOD);
+        Pattern pattern = Pattern.compile(INVERSE_SECTION);
+        Matcher matcher = pattern.matcher(template);
+
+        while (matcher.find()) {
+            String objectName = matcher.group(GROUP_ONE);
+            Object object = interpreter.interpretObject(objectName);
+            if (object == null) {
+                matcher.appendReplacement(output, matcher.group(GROUP_TWO));
+            }
+
+            if (object instanceof Boolean) {
+                if (object.equals(true)) {
+                    matcher.appendReplacement(output, "");
+                }
+                else {
+                    matcher.appendReplacement(output, matcher.group(GROUP_TWO));
+                }
+            }
+        }
+        matcher.appendTail(output);
+        return output.toString();
+    }
+
+    private static String replaceObjectAndMethod(Interpreter interpreter, String template) {
+        StringBuilder output = new StringBuilder();
+        Pattern pattern = Pattern.compile(OBJECT_AND_METHOD);
         Matcher matcher = pattern.matcher(template);
 
         while (matcher.find()) {

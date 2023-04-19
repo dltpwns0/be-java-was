@@ -1,7 +1,6 @@
 package util;
 
 
-import model.Model;
 import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 class MyLittleMustacheTest {
 
@@ -18,15 +19,16 @@ class MyLittleMustacheTest {
     @BeforeEach
     public void beforeEach() {
         interpreter = new Interpreter();
-        myLittleMustache = new MyLittleMustache(interpreter);
+        myLittleMustache = new MyLittleMustache();
     }
     @Test
     @DisplayName("객체 안의 메소드를 실행한 결과가 렌더링 되어야 한다.")
     public void mustacheTest0() {
         User user = new User("idA", "1234", "lee", "dltpwns6@naver.com");
-        Model model = new Model("user", user);
-        interpreter.addModel(model);
-        String html = myLittleMustache.render(htmlTest0);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("user", user);
+        String html = myLittleMustache.render(model, htmlTest0);
 
         System.out.println(html);
     }
@@ -36,12 +38,11 @@ class MyLittleMustacheTest {
     public void mustacheTest1() {
         User user = new User("idA", "1234", "lee", "dltpwns6@naver.com");
 
-        Model model = new Model("user", user);
-        interpreter.addModel(model);
-        model = new Model("isTrue", true);
-        interpreter.addModel(model);
+        Map<String, Object> model = new HashMap<>();
+        model.put("user", user);
+        model.put("isTrue", true);
 
-        String html = myLittleMustache.render(htmlTest1);
+        String html = myLittleMustache.render(model, htmlTest1);
 
         System.out.println(html);
     }
@@ -51,12 +52,11 @@ class MyLittleMustacheTest {
     public void mustacheTest2() {
         User user = new User("idA", "1234", "lee", "dltpwns6@naver.com");
 
-        Model model = new Model("user", user);
-        interpreter.addModel(model);
-        model = new Model("isTrue", false);
-        interpreter.addModel(model);
+        Map<String, Object> model = new HashMap<>();
+        model.put("user", user);
+        model.put("isTrue", false);
 
-        String html = myLittleMustache.render(htmlTest2);
+        String html = myLittleMustache.render(model, htmlTest2);
 
         System.out.println(html);
 
@@ -67,12 +67,11 @@ class MyLittleMustacheTest {
     public void mustacheTest3() {
         User user = new User("idA", "1234", "lee", "dltpwns6@naver.com");
 
-        Model model = new Model("user", user);
-        interpreter.addModel(model);
-        model = new Model("isTrue", null);
-        interpreter.addModel(model);
+        Map<String, Object> model = new HashMap<>();
+        model.put("user", user);
+        model.put("isTrue", null);
 
-        String html = myLittleMustache.render(htmlTest3);
+        String html = myLittleMustache.render(model, htmlTest3);
 
         System.out.println(html);
 
@@ -90,10 +89,24 @@ class MyLittleMustacheTest {
         users.add(userB);
         users.add(userC);
 
-        Model userModel = new Model("user", users);
+        Map<String, Object> model = new HashMap<>();
+        model.put("user", users);
 
-        interpreter.addModel(userModel);
-        String html = myLittleMustache.render(htmlTest4);
+        String html = myLittleMustache.render(model, htmlTest4);
+
+        System.out.println(html);
+    }
+
+    @Test
+    @DisplayName("조건문이 거짓일 때, 조건문 태그 안의 문서를 렌더링 되어야 한다.")
+    public void mustacheTest5() {
+        User user = new User("idA", "1234", "lee", "dltpwns6@naver.com");
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("user", user);
+        model.put("isTrue", false);
+
+        String html = myLittleMustache.render(model, htmlTest5);
 
         System.out.println(html);
 
@@ -135,4 +148,14 @@ class MyLittleMustacheTest {
                             <li>{{getEmail}}</li>
                             {{/user}}
                             """;
+
+    static String htmlTest5 = """
+                            {{^isTrue}}
+                            <li>{{user.getUserId}}</li>
+                            <li>{{user.getName}}</li>
+                            <li>{{user.getEmail}}</li>
+                            {{/isTrue}}
+                            """;
+
+
 }

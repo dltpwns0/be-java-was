@@ -1,29 +1,23 @@
 package util;
 
-import model.Model;
-
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Interpreter {
 
-    private Collection<Model> models;
+    private Map<String, Object> models;
 
-    public Interpreter(Collection<Model> models) {
-        this.models = models;
+    public Interpreter(Map<String, ?> models) {
+        this.models = new HashMap<>(models);
     }
 
     public Interpreter() {
-        models = new ArrayList<>();
+        models = new HashMap<>();
     };
-    public Interpreter(Model model) {
-        models = new ArrayList<>();
-        models.add(model);
-    }
 
-    public void addModel(Model model) {
-        this.models.add(model);
+    public void addModel(String name, Object value) {
+        this.models.put(name, value);
     }
 
 
@@ -61,9 +55,9 @@ public class Interpreter {
     }
 
     private Object findObjectBy(String name) {
-        for (Model model : models) {
-            if (model.getName().equals(name)) {
-                return model.getObject();
+        for (String key : models.keySet()) {
+            if (key.equals(name)) {
+                return models.get(key);
             }
         }
         return null;
