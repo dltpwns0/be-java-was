@@ -46,6 +46,12 @@ public class UserController implements Controller {
         return "redirect:/";
     }
 
+    @RequestMapping(path = "/logout",method = RequestMethod.GET)
+    public String logout(HttpRequest request) {
+        sessionManager.expire(request);
+        return "redirect:/";
+    }
+
     @RequestMapping()
     public String show(HttpRequest httpRequest, ModelAndView modelAndView) {
 
