@@ -90,8 +90,10 @@ public class HttpResponse {
 
     public void sendRedirect(String url) {
         if (url.startsWith(REDIRECT)) {
+            String replaceURL = url.replace(REDIRECT, "");
             this.statusCode = SC_FOUND;
-            this.headers.put(LOCATION, url.replace(REDIRECT, ""));
+            this.headers.put(LOCATION, replaceURL);
+            this.redirectURL= replaceURL;
         }
     }
 
