@@ -2,15 +2,17 @@ package configure;
 
 import annotation.Bean;
 import controller.Controller;
+import controller.DefaultController;
 import controller.UserController;
+import interceptor.DefaultInterceptor;
+import interceptor.Interceptor;
 import org.checkerframework.checker.units.qual.C;
 import servlet.DispatcherServlet;
 import session.SessionManager;
 import util.HttpRequestParser;
-import view.RedirectView;
-import view.ResponseView;
-import view.View;
-import view.ViewResolver;
+import util.Interpreter;
+import util.MyLittleMustache;
+import view.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,12 +28,21 @@ public class AppConfiguration {
 
     @Bean(name = "dispatcherServlet")
     public DispatcherServlet dispatcherServlet() {
+        SessionManager sessionManager = sessionManager();
+
         Collection<Controller> controllers = new ArrayList<>();
-        controllers.add(new UserController(sessionManager()));
+        controllers.add(new UserController(sessionManager));
+        controllers.add(new DefaultController()); // 순서 중요 : 고쳐야함;
+
+        Collection<Interceptor> interceptors = new ArrayList<>();
+        interceptors.add(new DefaultInterceptor(sessionManager));
+
 
         return new DispatcherServlet(
                 controllers,
-                viewResolver());
+                viewResolver(),
+                interceptors
+                );
     }
 
     //========
@@ -39,12 +50,35 @@ public class AppConfiguration {
     public SessionManager sessionManager() {
         return new SessionManager(new HashMap<>());
     }
+
     public ViewResolver viewResolver() {
         Collection<View> views = new ArrayList<>();
 
-        // TODO : 아래의 순서를 지켜줘야 하는 문제가 있음
-        views.add(new RedirectView("redirect:/"));
-        views.add(new ResponseView("/"));
+        // TODO : 폴더에서 파일을 읽어서 자동으로 추가하는 방법이 좋을 뜻
+        views.add(new MyView("/css/bootstrap.min.css"));
+        views.add(new MyView("/css/styles.css"));
+
+        views.add(new MyView("/fonts/glyphicons-halflings-regular.eot"));
+        views.add(new MyView("/fonts/glyphicons-halflings-regular.svg"));
+        views.add(new MyView("/fonts/glyphicons-halflings-regular.ttf"));
+        views.add(new MyView("/fonts/glyphicons-halflings-regular.woff"));
+        views.add(new MyView("/fonts/glyphicons-halflings-regular.woff2"));
+
+        views.add(new MyView("/images/80-text.png"));
+
+        views.add(new MyView("/js/bootstrap.min.js"));
+        views.add(new MyView("/js/jquery-2.2.0.min.js"));
+        views.add(new MyView("/js/scripts.js"));
+
+        views.add(new MyView("/redirect:" ));
+        views.add(new MyView("/index.html" ));
+
+        views.add(new MyView("/user/login.html" ));
+        views.add(new MyView("/user/form.html" ));
+        views.add(new MyView("/user/list.html" ));
+        views.add(new MyView("/user/login_failed.html" ));
+        views.add(new MyView("/user/profile.html" ));
+
         return new ViewResolver(views);
     }
 }
