@@ -1,58 +1,54 @@
 package servlet;
 
+import interceptor.Interceptor;
 import controller.Controller;
 import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import type.RequestMethod;
-import util.RequestMapping;
+import util.MethodAdaptor;
+import util.MyHandlerMethod;
 import view.View;
+import view.ModelAndView;
 import view.ViewResolver;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.Collection;
 
 public class DispatcherServlet implements HttpServlet {
 
     private final Collection<Controller> controllers;
+    private final Collection<Interceptor> interceptors;
     private final ViewResolver viewResolver;
+    private final MethodAdaptor methodAdaptor;
 
-    public DispatcherServlet(Collection<Controller> controllers, ViewResolver viewResolver) {
+    public DispatcherServlet(Collection<Controller> controllers, ViewResolver viewResolver, Collection<Interceptor> interceptors) {
         this.controllers = controllers;
         this.viewResolver = viewResolver;
+        this.interceptors = interceptors;
+
+
+        // DI 주입 받을 수도 있다. (나중에)
+        this.methodAdaptor = new MethodAdaptor();
+
     }
 
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
 
-        String pathInfo = httpRequest.getPathInfo();
-        String requestMethod = httpRequest.getMethod();
+        // 요청에 맞는 컨트롤러와 메소드를 찾는다.
+        MyHandlerMethod handlerMethod = new MyHandlerMethod(httpRequest, controllers);
 
-        // URL 을 처리할 수 있는 컨트롤러를 찾는다.
-        Controller serviceController = RequestMapping.requestControllerMapping(controllers, pathInfo);
-        if (serviceController == null) {
-            defaultService(httpRequest, httpResponse);
-            return;
-        }
-        // 컨트롤러에서 URL 을 처리할 수 있는 핸들러를 찾는다.
-        Method method = RequestMapping.requestHandlerMapping(serviceController.getClass(), pathInfo, RequestMethod.getMethod(requestMethod));
-        if (method == null) {
-            logger.info("메서드를 찾지 못했습니다.");
-            return;
+        ModelAndView modelAndView = new ModelAndView();
+
+        for (Interceptor interceptor : interceptors) {
+            interceptor.preHandle(httpRequest, httpResponse, modelAndView);
         }
 
-        String viewName = (String) method.invoke(serviceController, httpRequest, httpResponse);
+        String viewName = methodAdaptor.handle(httpRequest, httpResponse, modelAndView, handlerMethod);
+        
+        View view = viewResolver.resolve(viewName);
 
-        View resolve = viewResolver.resolve(viewName);
-
-        resolve.render(viewName, httpResponse);
+        view.render(modelAndView.getModel(), httpResponse);
     }
 
-    private void defaultService(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        String viewName = httpRequest.getPathInfo();
-        View resolve = viewResolver.resolve(viewName);
-        resolve.render(viewName, httpResponse);
-    }
 }
