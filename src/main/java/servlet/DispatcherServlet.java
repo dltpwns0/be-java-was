@@ -11,6 +11,7 @@ import view.View;
 import view.ModelAndView;
 import view.ViewResolver;
 
+import java.io.IOException;
 import java.util.Collection;
 
 public class DispatcherServlet implements HttpServlet {
@@ -41,13 +42,19 @@ public class DispatcherServlet implements HttpServlet {
         ModelAndView modelAndView = new ModelAndView();
 
         for (Interceptor interceptor : interceptors) {
-            interceptor.preHandle(httpRequest, httpResponse, modelAndView);
+            if (!interceptor.preHandle(httpRequest, httpResponse, modelAndView)) {
+                String redirectURL = httpResponse.getRedirectURL();
+                doResponse(httpResponse, modelAndView, redirectURL);
+            }
         }
 
         String viewName = methodAdaptor.handle(httpRequest, httpResponse, modelAndView, handlerMethod);
-        
-        View view = viewResolver.resolve(viewName);
 
+        doResponse(httpResponse, modelAndView, viewName);
+    }
+
+    private void doResponse(HttpResponse httpResponse, ModelAndView modelAndView, String viewName) throws IOException {
+        View view = viewResolver.resolve(viewName);
         view.render(modelAndView.getModel(), httpResponse);
     }
 

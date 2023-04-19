@@ -6,6 +6,7 @@ import controller.DefaultController;
 import controller.UserController;
 import interceptor.DefaultInterceptor;
 import interceptor.Interceptor;
+import interceptor.LoginCheckInterceptor;
 import servlet.DispatcherServlet;
 import session.SessionManager;
 import util.HttpRequestParser;
@@ -33,6 +34,7 @@ public class AppConfiguration {
 
         Collection<Interceptor> interceptors = new ArrayList<>();
         interceptors.add(new DefaultInterceptor(sessionManager));
+        interceptors.add(new LoginCheckInterceptor(sessionManager));
 
 
         return new DispatcherServlet(
