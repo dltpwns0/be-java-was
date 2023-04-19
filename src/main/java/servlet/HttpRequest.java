@@ -3,6 +3,7 @@ package servlet;
 import session.Cookie;
 import type.RequestMethod;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -20,6 +21,9 @@ public class HttpRequest {
     private Map<String, String> requestHeaders;
     private Map<String, String> requestBody;
 
+    public HttpRequest() {
+        cookies = new ArrayList<>();
+    }
 
     public Collection<Cookie> getCookies() {
         return this.cookies;
