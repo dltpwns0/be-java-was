@@ -7,6 +7,7 @@ import model.User;
 import service.UserService;
 import session.SessionManager;
 import type.RequestMethod;
+import view.ModelAndView;
 
 import java.util.Map;
 import java.util.Optional;
@@ -22,31 +23,36 @@ public class UserController implements Controller {
     }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
-    public String create(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
+    public String create(HttpRequest httpRequest) throws Exception {
         String requestUrl = httpRequest.getPathInfo();
         Map<String, String> requestParams = httpRequest.getRequestBody();
         userService.join(requestParams);
-        httpResponse.setStatus(HttpResponse.SC_SEE_OTHER);
         return "redirect:/";
     }
 
     @RequestMapping(path = "/login", method = RequestMethod.POST)
-    public String login(HttpRequest httpRequest, HttpResponse httpResponse) {
+    public String login(HttpRequest httpRequest, HttpResponse httpResponse,
+                        ModelAndView modelAndView) {
         String userId = httpRequest.getParameter("userId");
         String password = httpRequest.getParameter("password");
 
-        // TODO : Optional 을 사용하는게 좋을까?
         Optional<User> user = userService.login(userId, password);
 
         if (user.isEmpty()) {
             return "redirect:/user/login_failed.html";
         }
         sessionManager.createSession(user.get(),httpResponse);
+        modelAndView.addModel("user", user.get());
         return "redirect:/";
     }
 
     @RequestMapping()
-    public String show(HttpRequest httpRequest, HttpResponse httpResponse) {
+    public String show(HttpRequest httpRequest, ModelAndView modelAndView) {
+
+        User user = (User)sessionManager.getSession(httpRequest);
+        if (user != null) {
+            modelAndView.addModel("user", user);
+        }
         return httpRequest.getPathInfo();
     }
 }
