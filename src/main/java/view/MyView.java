@@ -9,10 +9,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-
-import static webserver.RequestHandler.logger;
 
 public class MyView implements View{
 

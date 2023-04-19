@@ -1,10 +1,7 @@
 package controller;
 
 import annotation.RequestMapping;
-import model.User;
 import servlet.HttpRequest;
-import servlet.HttpResponse;
-import view.ModelAndView;
 
 @RequestMapping(path = "/")
 public class DefaultController implements Controller {

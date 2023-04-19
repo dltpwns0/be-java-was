@@ -6,12 +6,9 @@ import controller.DefaultController;
 import controller.UserController;
 import interceptor.DefaultInterceptor;
 import interceptor.Interceptor;
-import org.checkerframework.checker.units.qual.C;
 import servlet.DispatcherServlet;
 import session.SessionManager;
 import util.HttpRequestParser;
-import util.Interpreter;
-import util.MyLittleMustache;
 import view.*;
 
 import java.util.ArrayList;
