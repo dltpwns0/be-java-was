@@ -1,6 +1,7 @@
 package controller;
 
 import annotation.RequestMapping;
+import db.Database;
 import servlet.HttpRequest;
 import servlet.HttpResponse;
 import model.User;
@@ -9,6 +10,7 @@ import session.SessionManager;
 import type.RequestMethod;
 import view.ModelAndView;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,6 +52,15 @@ public class UserController implements Controller {
     public String logout(HttpRequest request) {
         sessionManager.expire(request);
         return "redirect:/";
+    }
+
+    @RequestMapping(path = "/list", method = RequestMethod.GET)
+    public String list(ModelAndView modelAndView) {
+
+        Collection<User> users = Database.findAll();
+        modelAndView.addModel("users",users);
+
+        return "/user/list.html";
     }
 
     @RequestMapping()
