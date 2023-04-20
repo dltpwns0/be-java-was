@@ -1,13 +1,16 @@
 package configure;
 
 import annotation.Bean;
+import controller.ArticleController;
 import controller.Controller;
 import controller.DefaultController;
 import controller.UserController;
+import db.ArticleDatabase;
 import db.UserDatabase;
 import interceptor.DefaultInterceptor;
 import interceptor.Interceptor;
 import interceptor.LoginCheckInterceptor;
+import service.ArticleService;
 import service.UserService;
 import servlet.DispatcherServlet;
 import session.SessionManager;
@@ -29,12 +32,16 @@ public class AppConfiguration {
     @Bean(name = "dispatcherServlet")
     public DispatcherServlet dispatcherServlet() {
         SessionManager sessionManager = sessionManager();
+        ArticleService articleService = articleService();
+        UserService userService = userService();
 
         Collection<Controller> controllers = new ArrayList<>();
         // TODO : 내가 객체들간의 관계를 생각해서 설정해주는 것은 귀찮다.
         // TODO : 빈 테이블 같은 것을 만들어서, 자동으로 싱글톤으로 객체들을 만들고 관계를 맺게 할 수 있지 않을까?
-        controllers.add(new UserController(userService(), sessionManager));
-        controllers.add(new DefaultController()); // 순서 중요 : 고쳐야함;
+        controllers.add(new UserController(userService, sessionManager));
+        controllers.add(new ArticleController(articleService));
+        controllers.add(new DefaultController(articleService)); // 순서 중요 : 고쳐야함;
+
 
         Collection<Interceptor> interceptors = new ArrayList<>();
         interceptors.add(new DefaultInterceptor(sessionManager));
@@ -60,9 +67,16 @@ public class AppConfiguration {
         return new UserDatabase("jdbc:mysql://127.0.01:3306/codesquad","root", "1234");
     }
 
+    public ArticleDatabase articleDatabase() {
+        // TODO : 설정 파일을 하나 만들어 두고, 파일을 읽어서 할 수 있지 않을까?
+        return new ArticleDatabase("jdbc:mysql://127.0.01:3306/codesquad","root", "1234");
+    }
+
     public UserService userService() {
         return new UserService(userDatabase());
     }
+
+    public ArticleService articleService() {return new ArticleService(articleDatabase()); }
 
     public ViewResolver viewResolver() {
         Collection<View> views = new ArrayList<>();
