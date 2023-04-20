@@ -2,6 +2,7 @@ package controller;
 
 import annotation.RequestMapping;
 import db.Database;
+import db.UserDatabase;
 import servlet.HttpRequest;
 import servlet.HttpResponse;
 import model.User;
@@ -17,10 +18,11 @@ import java.util.Optional;
 @RequestMapping(path = "/user")
 public class UserController implements Controller {
 
-    private final UserService userService = new UserService();
-    private SessionManager sessionManager;
+    private final SessionManager sessionManager;
+    private final UserService userService;
 
-    public UserController(SessionManager sessionManager) {
+    public UserController(UserService userService, SessionManager sessionManager) {
+        this.userService = userService;
         this.sessionManager = sessionManager;
     }
 
@@ -57,7 +59,7 @@ public class UserController implements Controller {
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public String list(ModelAndView modelAndView) {
 
-        Collection<User> users = Database.findAll();
+        Collection<User> users = userService.findAll();
         modelAndView.addModel("users",users);
 
         return "/user/list.html";
