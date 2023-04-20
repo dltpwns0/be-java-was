@@ -4,9 +4,11 @@ import annotation.Bean;
 import controller.Controller;
 import controller.DefaultController;
 import controller.UserController;
+import db.UserDatabase;
 import interceptor.DefaultInterceptor;
 import interceptor.Interceptor;
 import interceptor.LoginCheckInterceptor;
+import service.UserService;
 import servlet.DispatcherServlet;
 import session.SessionManager;
 import util.HttpRequestParser;
@@ -29,7 +31,9 @@ public class AppConfiguration {
         SessionManager sessionManager = sessionManager();
 
         Collection<Controller> controllers = new ArrayList<>();
-        controllers.add(new UserController(sessionManager));
+        // TODO : 내가 객체들간의 관계를 생각해서 설정해주는 것은 귀찮다.
+        // TODO : 빈 테이블 같은 것을 만들어서, 자동으로 싱글톤으로 객체들을 만들고 관계를 맺게 할 수 있지 않을까?
+        controllers.add(new UserController(userService(), sessionManager));
         controllers.add(new DefaultController()); // 순서 중요 : 고쳐야함;
 
         Collection<Interceptor> interceptors = new ArrayList<>();
@@ -48,6 +52,16 @@ public class AppConfiguration {
     // TODO : 아래도 빈으로 관리할 수 있는 방법을 생각해보자.
     public SessionManager sessionManager() {
         return new SessionManager(new HashMap<>());
+    }
+
+
+    public UserDatabase userDatabase() {
+        // TODO : 설정 파일을 하나 만들어 두고, 파일을 읽어서 할 수 있지 않을까?
+        return new UserDatabase("jdbc:mysql://127.0.01:3306/codesquad","root", "1234");
+    }
+
+    public UserService userService() {
+        return new UserService(userDatabase());
     }
 
     public ViewResolver viewResolver() {
