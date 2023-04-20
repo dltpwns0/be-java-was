@@ -1,14 +1,11 @@
 package db;
 
 import model.User;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +37,7 @@ class UserDatabaseTest {
 
         // when
         userDatabase.join(user);
-        User userA = userDatabase.findUser("UserA");
+        User userA = userDatabase.findUserById("UserA");
 
         // then
         assertThat(userA).usingRecursiveComparison().isEqualTo(user);
@@ -79,7 +76,7 @@ class UserDatabaseTest {
         // when
         userDatabase.join(user);
         int result = userDatabase.deleteUser("UserA");
-        User userA = userDatabase.findUser("UserA");
+        User userA = userDatabase.findUserById("UserA");
 
         // then
         assertThat(userA).isNull();
@@ -98,7 +95,7 @@ class UserDatabaseTest {
         // when
         userDatabase.join(beforeUser);
         userDatabase.update(afterUser);
-        User user = userDatabase.findUser("UserA");
+        User user = userDatabase.findUserById("UserA");
 
         // then
         assertThat(user).usingRecursiveComparison().isEqualTo(expectedUser);

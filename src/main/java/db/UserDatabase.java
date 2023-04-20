@@ -41,7 +41,7 @@ public class UserDatabase {
         }
     }
 
-    public User findUser(String userId) {
+    public User findUserById(String userId) {
         String sql = "select userId, password, name, email from users where userId = ?";
         Connection conn = null;
         PreparedStatement pstmt = null;
