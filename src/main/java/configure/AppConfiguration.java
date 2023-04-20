@@ -92,6 +92,9 @@ public class AppConfiguration {
         views.add(new MyView("/user/login_failed.html" ));
         views.add(new MyView("/user/profile.html" ));
 
+        views.add(new MyView("/qna/form.html" ));
+        views.add(new MyView("/qna/show.html" ));
+
         return new ViewResolver(views);
     }
 }
