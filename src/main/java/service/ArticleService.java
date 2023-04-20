@@ -4,6 +4,8 @@ import db.ArticleDatabase;
 import model.Article;
 import util.MyObjectMapper;
 
+import java.util.Collection;
+
 public class ArticleService {
 
     private ArticleDatabase articleDatabase;
@@ -22,6 +24,10 @@ public class ArticleService {
 
     public Article findById(int articleId) {
         return articleDatabase.findByIndex(articleId);
+    }
+
+    public Collection<Article> findAll() {
+        return articleDatabase.findAll();
     }
 
 }
