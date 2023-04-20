@@ -31,6 +31,8 @@ public class MyHandlerMethod {
         if (method == null) {
             logger.info("메서드를 찾지 못했습니다.");
         }
+
+        logger.info("요청된 핸들러는 : {} 입니다.", method.toString());
     }
 
     public Controller getHandler() {
