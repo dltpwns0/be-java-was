@@ -1,8 +1,8 @@
 package controller;
 
+import annotation.PathVariable;
 import annotation.RequestMapping;
 import model.Article;
-import model.User;
 import service.ArticleService;
 import servlet.HttpRequest;
 import type.RequestMethod;
@@ -26,9 +26,13 @@ public class ArticleController implements Controller{
         return "redirect:/";
     }
 
-    @RequestMapping()
-    public String show(HttpRequest httpRequest) {
-        return httpRequest.getPathInfo();
+    @RequestMapping(path = "/show/{articleId}")
+    public String showArticle(@PathVariable(name = "articleId") int articleId,
+                              HttpRequest httpRequest, ModelAndView modelAndView) {
+
+        Article article = articleService.findById(articleId);
+        modelAndView.addModel("article", article);
+        return "/qna/show.html";
     }
 
 }

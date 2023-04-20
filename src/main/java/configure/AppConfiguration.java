@@ -15,6 +15,8 @@ import service.UserService;
 import servlet.DispatcherServlet;
 import session.SessionManager;
 import util.HttpRequestParser;
+import util.MethodAdaptor;
+import util.MyArgumentResolver;
 import view.*;
 
 import java.util.ArrayList;
@@ -51,11 +53,21 @@ public class AppConfiguration {
         return new DispatcherServlet(
                 controllers,
                 viewResolver(),
-                interceptors
+                interceptors,
+                methodAdaptor()
                 );
     }
 
     //========
+
+    public MethodAdaptor methodAdaptor() {
+        return new MethodAdaptor(myArgumentResolver());
+    }
+
+    public MyArgumentResolver myArgumentResolver() {
+        return new MyArgumentResolver();
+    }
+
     // TODO : 아래도 빈으로 관리할 수 있는 방법을 생각해보자.
     public SessionManager sessionManager() {
         return new SessionManager(new HashMap<>());
@@ -68,7 +80,6 @@ public class AppConfiguration {
     }
 
     public ArticleDatabase articleDatabase() {
-        // TODO : 설정 파일을 하나 만들어 두고, 파일을 읽어서 할 수 있지 않을까?
         return new ArticleDatabase("jdbc:mysql://127.0.01:3306/codesquad","root", "1234");
     }
 

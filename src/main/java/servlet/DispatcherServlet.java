@@ -21,15 +21,11 @@ public class DispatcherServlet implements HttpServlet {
     private final ViewResolver viewResolver;
     private final MethodAdaptor methodAdaptor;
 
-    public DispatcherServlet(Collection<Controller> controllers, ViewResolver viewResolver, Collection<Interceptor> interceptors) {
+    public DispatcherServlet(Collection<Controller> controllers, ViewResolver viewResolver, Collection<Interceptor> interceptors, MethodAdaptor methodAdaptor) {
         this.controllers = controllers;
         this.viewResolver = viewResolver;
         this.interceptors = interceptors;
-
-
-        // DI 주입 받을 수도 있다. (나중에)
-        this.methodAdaptor = new MethodAdaptor();
-
+        this.methodAdaptor = methodAdaptor;
     }
 
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
