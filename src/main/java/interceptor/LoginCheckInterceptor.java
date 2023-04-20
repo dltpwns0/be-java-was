@@ -18,7 +18,7 @@ public class LoginCheckInterceptor implements Interceptor{
         String pathInfo = httpRequest.getPathInfo();
 
         // TODO : 이런 하드 코딩은 지양해야 한다.
-        if (!pathInfo.equals("/user/list")) {
+        if (!pathInfo.equals("/user/list") && !pathInfo.startsWith("/qna/show")) {
             return true;
         }
 
