@@ -7,7 +7,7 @@ public class ViewResolver {
 
     private final String ROOT_PATH = "src/main/resources/";
     private final String[] BASE_PATH = {"static", "templates"};
-    private final String WELCOME_PAGE = "templates/index.html";
+    private final String ERROR_404 = "static/errorPage-404.html";
 
     private final String REDIRECT = "redirect:";
 
@@ -32,11 +32,9 @@ public class ViewResolver {
             File file = getFileAt(view.getName());
 
             return new MyView(file.getPath());
-
         }
 
-        // TODO : 예외 처리를 해야 할 뜻
-        return new MyView(ROOT_PATH + WELCOME_PAGE);
+        return new MyView(ROOT_PATH + ERROR_404);
     }
 
     private File getFileAt(String fileName) {
