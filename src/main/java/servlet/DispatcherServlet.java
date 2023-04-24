@@ -6,7 +6,7 @@ import controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.MethodAdaptor;
-import util.MyHandlerMethod;
+import util.MyHandler;
 import view.View;
 import view.ModelAndView;
 import view.ViewResolver;
@@ -34,18 +34,18 @@ public class DispatcherServlet implements HttpServlet {
     public void service(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
 
         // 요청에 맞는 컨트롤러와 메소드를 찾는다.
-        MyHandlerMethod handlerMethod = new MyHandlerMethod(httpRequest, controllers);
+        MyHandler handler = new MyHandler(httpRequest, controllers);
 
         ModelAndView modelAndView = new ModelAndView();
 
         for (Interceptor interceptor : interceptors) {
-            if (!interceptor.preHandle(httpRequest, httpResponse, handlerMethod)) {
+            if (!interceptor.preHandle(httpRequest, httpResponse, handler)) {
                 String redirectURL = httpResponse.getRedirectURL();
                 doResponse(httpResponse, modelAndView, redirectURL);
             }
         }
 
-        String viewName = methodAdaptor.handle(httpRequest, httpResponse, modelAndView, handlerMethod);
+        String viewName = methodAdaptor.handle(httpRequest, httpResponse, modelAndView, handler);
 
         doResponse(httpResponse, modelAndView, viewName);
     }

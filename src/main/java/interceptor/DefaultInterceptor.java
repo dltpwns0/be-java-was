@@ -3,7 +3,7 @@ package interceptor;
 import servlet.HttpRequest;
 import servlet.HttpResponse;
 import session.SessionManager;
-import util.MyHandlerMethod;
+import util.MyHandler;
 
 public class DefaultInterceptor implements Interceptor {
 
@@ -12,7 +12,7 @@ public class DefaultInterceptor implements Interceptor {
         this.sessionManager = sessionManager;
     }
 
-    public boolean preHandle(HttpRequest httpRequest, HttpResponse httpResponse, MyHandlerMethod handlerMethod) {
+    public boolean preHandle(HttpRequest httpRequest, HttpResponse httpResponse, MyHandler handlerMethod) {
         return true;
     }
 }

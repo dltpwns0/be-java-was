@@ -21,8 +21,8 @@ public class MethodAdaptor {
         this.sessionManager = sessionManager;
     }
 
-    public String handle(HttpRequest httpRequest, HttpResponse httpResponse, ModelAndView modelAndView, MyHandlerMethod handlerMethod) throws InvocationTargetException, IllegalAccessException {
-        Controller handler = handlerMethod.getHandler();
+    public String handle(HttpRequest httpRequest, HttpResponse httpResponse, ModelAndView modelAndView, MyHandler handlerMethod) throws InvocationTargetException, IllegalAccessException {
+        Controller controller = handlerMethod.getController();
         Method method = handlerMethod.getMethod();
         Class<?>[] parameterTypes = method.getParameterTypes();
 
@@ -44,7 +44,7 @@ public class MethodAdaptor {
         }
 
 
-        String viewName = (String) method.invoke(handler, arguments.toArray());
+        String viewName = (String) method.invoke(controller, arguments.toArray());
         httpResponse.sendRedirect(viewName);
 
         User user = (User) sessionManager.getSession(httpRequest);
