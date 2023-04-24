@@ -21,14 +21,11 @@ public class DispatcherServlet implements HttpServlet {
     private final ViewResolver viewResolver;
     private final MethodAdaptor methodAdaptor;
 
-    public DispatcherServlet(Collection<Controller> controllers, ViewResolver viewResolver, Collection<Interceptor> interceptors) {
+    public DispatcherServlet(Collection<Controller> controllers, ViewResolver viewResolver, Collection<Interceptor> interceptors, MethodAdaptor methodAdaptor) {
         this.controllers = controllers;
         this.viewResolver = viewResolver;
         this.interceptors = interceptors;
-
-
-        // DI 주입 받을 수도 있다. (나중에)
-        this.methodAdaptor = new MethodAdaptor();
+        this.methodAdaptor = methodAdaptor;
 
     }
 
@@ -42,7 +39,7 @@ public class DispatcherServlet implements HttpServlet {
         ModelAndView modelAndView = new ModelAndView();
 
         for (Interceptor interceptor : interceptors) {
-            if (!interceptor.preHandle(httpRequest, httpResponse, modelAndView)) {
+            if (!interceptor.preHandle(httpRequest, httpResponse, handlerMethod)) {
                 String redirectURL = httpResponse.getRedirectURL();
                 doResponse(httpResponse, modelAndView, redirectURL);
             }

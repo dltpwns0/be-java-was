@@ -4,6 +4,7 @@ import model.User;
 import servlet.HttpRequest;
 import servlet.HttpResponse;
 import session.SessionManager;
+import util.MyHandlerMethod;
 import view.ModelAndView;
 
 public class LoginCheckInterceptor implements Interceptor{
@@ -13,7 +14,7 @@ public class LoginCheckInterceptor implements Interceptor{
     }
 
     @Override
-    public boolean preHandle(HttpRequest httpRequest, HttpResponse httpResponse, ModelAndView modelAndView) {
+    public boolean preHandle(HttpRequest httpRequest, HttpResponse httpResponse, MyHandlerMethod handlerMethod) {
 
         String pathInfo = httpRequest.getPathInfo();
 

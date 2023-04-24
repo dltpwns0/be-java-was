@@ -10,6 +10,7 @@ import interceptor.LoginCheckInterceptor;
 import servlet.DispatcherServlet;
 import session.SessionManager;
 import util.HttpRequestParser;
+import util.MethodAdaptor;
 import view.*;
 
 import java.util.ArrayList;
@@ -40,7 +41,8 @@ public class AppConfiguration {
         return new DispatcherServlet(
                 controllers,
                 viewResolver(),
-                interceptors
+                interceptors,
+                new MethodAdaptor(sessionManager)
                 );
     }
 

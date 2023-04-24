@@ -2,8 +2,10 @@ package util;
 
 
 import controller.Controller;
+import model.User;
 import servlet.HttpRequest;
 import servlet.HttpResponse;
+import session.SessionManager;
 import view.ModelAndView;
 
 import java.lang.reflect.InvocationTargetException;
@@ -12,6 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MethodAdaptor {
+
+    private SessionManager sessionManager;
+
+    public MethodAdaptor(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+    }
+
     public String handle(HttpRequest httpRequest, HttpResponse httpResponse, ModelAndView modelAndView, MyHandlerMethod handlerMethod) throws InvocationTargetException, IllegalAccessException {
         Controller handler = handlerMethod.getHandler();
         Method method = handlerMethod.getMethod();
@@ -37,6 +46,12 @@ public class MethodAdaptor {
 
         String viewName = (String) method.invoke(handler, arguments.toArray());
         httpResponse.sendRedirect(viewName);
+
+        User user = (User) sessionManager.getSession(httpRequest);
+        if (user != null) {
+            modelAndView.addModel("user", user);
+            modelAndView.addModel("login", true);
+        }
         return viewName;
     }
 }
