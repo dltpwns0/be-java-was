@@ -28,11 +28,16 @@ public class ArticleController implements Controller{
 
     @RequestMapping(path = "/show/{articleId}")
     public String showArticle(@PathVariable(name = "articleId") int articleId,
-                              HttpRequest httpRequest, ModelAndView modelAndView) {
+                              ModelAndView modelAndView) {
 
         Article article = articleService.findById(articleId);
         modelAndView.addModel("article", article);
         return "/qna/show.html";
     }
 
+    @RequestMapping(path = "/form.html")
+    public String show() {
+        return "/qna/form.html";
+    }
+    
 }
