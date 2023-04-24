@@ -1,5 +1,6 @@
 package servlet;
 
+import controller.DefaultController;
 import interceptor.Interceptor;
 import controller.Controller;
 import controller.UserController;
@@ -35,6 +36,13 @@ public class DispatcherServlet implements HttpServlet {
 
         // 요청에 맞는 컨트롤러와 메소드를 찾는다.
         MyHandler handler = new MyHandler(httpRequest, controllers);
+
+        logger.info("핸들러 {} : 메소드 {}", handler.getController(), handler.getMethod());
+
+        // DefaultController가 응답할 경우 바로 특별한 로직없이 바로 응답
+        if (handler.getController() instanceof DefaultController) {
+            doResponse(httpResponse, new ModelAndView(), httpRequest.getPathInfo());
+        }
 
         ModelAndView modelAndView = new ModelAndView();
 
