@@ -8,7 +8,6 @@ public class ViewResolver {
     private final String ROOT_PATH = "src/main/resources/";
     private final String[] BASE_PATH = {"static", "templates"};
     private final String ERROR_404 = "static/errorPage-404.html";
-
     private final String REDIRECT = "redirect:";
 
     private Collection<View> views;
@@ -22,19 +21,18 @@ public class ViewResolver {
         for (View view : views) {
 
             if (viewName.startsWith(REDIRECT)) {
-                return new MyView("");
+                return new MyView();
             }
 
             if (!view.getName().equals(viewName)) {
                 continue;
             }
-
-            File file = getFileAt(view.getName());
-
-            return new MyView(file.getPath());
+            // TODO : 현재는 굉장히 비효율적이다.
+            File file = getFileAt(view.getPath());
+            return new MyView(viewName, file.getPath());
         }
 
-        return new MyView(ROOT_PATH + ERROR_404);
+        return new MyView("", ROOT_PATH + ERROR_404);
     }
 
     private File getFileAt(String fileName) {

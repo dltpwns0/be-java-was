@@ -90,32 +90,34 @@ public class AppConfiguration {
         Collection<View> views = new ArrayList<>();
 
         // TODO : 폴더에서 파일을 읽어서 자동으로 추가하는 방법이 좋을 뜻
-        views.add(new MyView("/css/bootstrap.min.css"));
-        views.add(new MyView("/css/styles.css"));
+        views.add(new MyView("/css/bootstrap.min.css", "/css/bootstrap.min.css"));
+        views.add(new MyView("/css/styles.css", "/css/styles.css"));
 
-        views.add(new MyView("/fonts/glyphicons-halflings-regular.eot"));
-        views.add(new MyView("/fonts/glyphicons-halflings-regular.svg"));
-        views.add(new MyView("/fonts/glyphicons-halflings-regular.ttf"));
-        views.add(new MyView("/fonts/glyphicons-halflings-regular.woff"));
-        views.add(new MyView("/fonts/glyphicons-halflings-regular.woff2"));
+        views.add(new MyView("/fonts/glyphicons-halflings-regular.eot", "/fonts/glyphicons-halflings-regular.eot"));
+        views.add(new MyView("/fonts/glyphicons-halflings-regular.svg", "/fonts/glyphicons-halflings-regular.svg"));
+        views.add(new MyView("/fonts/glyphicons-halflings-regular.ttf", "/fonts/glyphicons-halflings-regular.ttf"));
+        views.add(new MyView("/fonts/glyphicons-halflings-regular.woff", "/fonts/glyphicons-halflings-regular.woff"));
+        views.add(new MyView("/fonts/glyphicons-halflings-regular.woff2", "/fonts/glyphicons-halflings-regular.woff2"));
 
-        views.add(new MyView("/images/80-text.png"));
+        views.add(new MyView("/images/80-text.png", "/images/80-text.png"));
 
-        views.add(new MyView("/js/bootstrap.min.js"));
-        views.add(new MyView("/js/jquery-2.2.0.min.js"));
-        views.add(new MyView("/js/scripts.js"));
+        views.add(new MyView("/js/bootstrap.min.js", "/js/bootstrap.min.js"));
+        views.add(new MyView("/js/jquery-2.2.0.min.js", "/js/jquery-2.2.0.min.js"));
+        views.add(new MyView("/js/scripts.js", "/js/scripts.js"));
 
-        views.add(new MyView("/redirect:" ));
-        views.add(new MyView("/index.html" ));
+        views.add(new MyView("/redirect:", "/redirect:"));
+        views.add(new MyView("/index.html", "/index.html"));
+        views.add(new MyView("/index", "/index.html"));
+        views.add(new MyView("/", "/index.html"));
 
-        views.add(new MyView("/user/login.html" ));
-        views.add(new MyView("/user/form.html" ));
-        views.add(new MyView("/user/list.html" ));
-        views.add(new MyView("/user/login_failed.html" ));
-        views.add(new MyView("/user/profile.html" ));
+        views.add(new MyView("/user/login", "/user/login.html"));
+        views.add(new MyView("/user/form", "/user/form.html"));
+        views.add(new MyView("/user/list", "/user/list.html"));
+        views.add(new MyView("/user/login_failed", "/user/login_failed.html"));
+        views.add(new MyView("/user/profile", "/user/profile.html"));
 
-        views.add(new MyView("/qna/form.html" ));
-        views.add(new MyView("/qna/show.html" ));
+        views.add(new MyView("/qna/form", "/qna/form.html"));
+        views.add(new MyView("/qna/show", "/qna/show.html"));
 
         return new ViewResolver(views);
     }
