@@ -27,11 +27,6 @@ public class MyHandler {
         }
         // 컨트롤러에서 URL 을 처리할 수 있는 핸들러를 찾는다.
         this.method = RequestMapping.requestMethodMapping(controller.getClass(), pathInfo, RequestMethod.getMethod(requestMethod));
-        if (method == null) {
-            throw new NoSuchMethodError("메서드를 찾지 못했습니다.");
-        }
-
-        logger.info("요청된 핸들러는 : {} 입니다.", method.toString());
     }
 
     public Controller getController() {
