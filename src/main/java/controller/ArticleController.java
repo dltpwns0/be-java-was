@@ -8,6 +8,7 @@ import servlet.HttpRequest;
 import type.RequestMethod;
 import view.ModelAndView;
 
+import java.util.Collection;
 import java.util.Map;
 
 @RequestMapping(path = "/qna")
@@ -32,12 +33,19 @@ public class ArticleController implements Controller{
 
         Article article = articleService.findById(articleId);
         modelAndView.addModel("article", article);
-        return "/qna/show.html";
+        return "/qna/show";
     }
 
-    @RequestMapping(path = "/form.html")
+    @RequestMapping(path = "/list")
+    public String showList(ModelAndView modelAndView) {
+        Collection<Article> articles = articleService.findAll();
+        modelAndView.addModel("articles", articles);
+        return "/index";
+    }
+
+    @RequestMapping(path = "/form")
     public String show() {
-        return "/qna/form.html";
+        return "/qna/form";
     }
     
 }
