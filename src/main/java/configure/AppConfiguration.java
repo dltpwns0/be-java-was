@@ -17,6 +17,7 @@ import session.SessionManager;
 import util.HttpRequestParser;
 import util.MethodAdaptor;
 import util.MyArgumentResolver;
+
 import view.*;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class AppConfiguration {
         // TODO : 빈 테이블 같은 것을 만들어서, 자동으로 싱글톤으로 객체들을 만들고 관계를 맺게 할 수 있지 않을까?
         controllers.add(new UserController(userService, sessionManager));
         controllers.add(new ArticleController(articleService));
-        controllers.add(new DefaultController(articleService)); // 순서 중요 : 고쳐야함;
+        controllers.add(new DefaultController()); // 순서 중요 : 고쳐야함;
 
 
         Collection<Interceptor> interceptors = new ArrayList<>();
@@ -54,15 +55,11 @@ public class AppConfiguration {
                 controllers,
                 viewResolver(),
                 interceptors,
-                methodAdaptor()
+                new MethodAdaptor(myArgumentResolver(), sessionManager)
                 );
     }
 
     //========
-
-    public MethodAdaptor methodAdaptor() {
-        return new MethodAdaptor(myArgumentResolver());
-    }
 
     public MyArgumentResolver myArgumentResolver() {
         return new MyArgumentResolver();

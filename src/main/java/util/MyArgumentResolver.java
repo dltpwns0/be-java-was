@@ -15,15 +15,14 @@ import java.util.List;
 public class MyArgumentResolver {
 
 
-    public List<Object> resolve(HttpRequest httpRequest, HttpResponse httpResponse, ModelAndView modelAndView, MyHandlerMethod handler) {
-        Controller controller = handler.getHandler();
+    public List<Object> resolve(HttpRequest httpRequest, HttpResponse httpResponse, ModelAndView modelAndView, MyHandler handler) {
+        Controller controller = handler.getController();
         Method method = handler.getMethod();
 
         Parameter[] parameters = method.getParameters();
 
         List<Object> arguments = new ArrayList<>();
 
-        // TODO : 이렇게 조건문 투성이로 하지말고, 다른 방법은 없을까?
         for (Parameter parameter : parameters) {
             PathVariable parameterAnnotation = parameter.getAnnotation(PathVariable.class);
             Class<?> parameterType = parameter.getType();
@@ -58,8 +57,8 @@ public class MyArgumentResolver {
         return arguments;
     }
 
-    private String[] getHandlerPaths(MyHandlerMethod handlerMethod) {
-        Controller controller = handlerMethod.getHandler();
+    private String[] getHandlerPaths(MyHandler handlerMethod) {
+        Controller controller = handlerMethod.getController();
         Method method = handlerMethod.getMethod();
 
         String controllerAnnotationPathInfo = controller.getClass().getAnnotation(RequestMapping.class).path()[0];

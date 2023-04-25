@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
+import static webserver.RequestHandler.logger;
+
 @RequestMapping(path = "/user")
 public class UserController implements Controller {
 
@@ -47,7 +49,7 @@ public class UserController implements Controller {
         }
         sessionManager.createSession(user.get(),httpResponse);
         modelAndView.addModel("user", user.get());
-        return "redirect:/";
+        return "redirect:/user";
     }
 
     @RequestMapping(path = "/logout",method = RequestMethod.GET)
@@ -65,13 +67,24 @@ public class UserController implements Controller {
         return "/user/list.html";
     }
 
-    @RequestMapping()
-    public String show(HttpRequest httpRequest, ModelAndView modelAndView) {
-
-        User user = (User)sessionManager.getSession(httpRequest);
-        if (user != null) {
-            modelAndView.addModel("user", user);
-        }
-        return httpRequest.getPathInfo();
+    @RequestMapping
+    public String show() {
+        return "/index.html";
     }
+
+    @RequestMapping(path = "/login.html")
+    public String showLogin() {
+        return "/user/login.html";
+    }
+
+    @RequestMapping(path = "/login_failed.html")
+    public String showLoginFailed() {
+        return "/user/login_failed.html";
+    }
+
+    @RequestMapping(path = "/form.html")
+    public String showForm() {
+        return "/user/form.html";
+    }
+
 }
